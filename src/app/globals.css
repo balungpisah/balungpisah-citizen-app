@@ -1,0 +1,482 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================
+   BALUNG PISAH DESIGN SYSTEM
+   Platform Aspirasi Rakyat
+
+   Color Philosophy:
+   - Gold (#D4A84B): Primary brand color - warmth, trust, value
+   - Orange (#E67E22): Accent for warnings, highlights
+   - Light Mode: Cream backgrounds with gold accents
+   - Dark Mode: Deep dark (#0D0D0D) - professional, focused
+   ============================================ */
+
+/* ============================================
+   LIGHT MODE - Warm cream with gold accents
+   ============================================ */
+:root {
+  /* Base radius */
+  --radius: 0.75rem;
+
+  /* Background & Surfaces - Warm cream tones */
+  --background: rgb(252 250 245);
+  --foreground: rgb(38 32 20);
+  --card: rgb(255 253 250);
+  --card-foreground: rgb(38 32 20);
+  --popover: rgb(255 253 250);
+  --popover-foreground: rgb(38 32 20);
+
+  /* Primary - Vibrant Gold */
+  --primary: rgb(212 168 75);
+  --primary-foreground: rgb(38 32 20);
+
+  /* Secondary - Orange */
+  --secondary: rgb(230 126 34);
+  --secondary-foreground: rgb(255 255 255);
+
+  /* Muted - Warm tinted */
+  --muted: rgb(245 240 232);
+  --muted-foreground: rgb(120 110 95);
+
+  /* Accent - Light gold for hover states */
+  --accent: rgb(250 245 230);
+  --accent-foreground: rgb(212 168 75);
+
+  /* Destructive - Red */
+  --destructive: rgb(231 76 60);
+  --destructive-foreground: rgb(255 255 255);
+
+  /* Success, Warning, Info */
+  --success: rgb(39 174 96);
+  --success-foreground: rgb(255 255 255);
+  --warning: rgb(243 156 18);
+  --warning-foreground: rgb(38 32 20);
+  --info: rgb(52 152 219);
+  --info-foreground: rgb(255 255 255);
+
+  /* Borders & Inputs - Warm tinted */
+  --border: rgb(230 220 200);
+  --input: rgb(230 220 200);
+  --ring: rgb(212 168 75);
+
+  /* Charts - Gold/orange palette */
+  --chart-1: rgb(212 168 75); /* Gold */
+  --chart-2: rgb(230 126 34); /* Orange */
+  --chart-3: rgb(52 152 219); /* Blue */
+  --chart-4: rgb(39 174 96); /* Green */
+  --chart-5: rgb(155 89 182); /* Purple */
+
+  /* Sidebar - Light warm */
+  --sidebar: rgb(250 248 243);
+  --sidebar-foreground: rgb(38 32 20);
+  --sidebar-primary: rgb(212 168 75);
+  --sidebar-primary-foreground: rgb(38 32 20);
+  --sidebar-accent: rgb(245 240 232);
+  --sidebar-accent-foreground: rgb(120 110 95);
+  --sidebar-border: rgb(230 220 200);
+  --sidebar-ring: rgb(212 168 75);
+
+  /* Status Colors */
+  --status-submitted: rgb(149 165 166);
+  --status-review: rgb(52 152 219);
+  --status-marketplace: rgb(243 156 18);
+  --status-claimed: rgb(212 168 75);
+  --status-progress: rgb(155 89 182);
+  --status-completed: rgb(39 174 96);
+  --status-rejected: rgb(231 76 60);
+
+  /* Balung Pisah Custom Colors */
+  --bp-gold: rgb(212 168 75);
+  --bp-gold-light: rgb(229 197 117);
+  --bp-gold-dark: rgb(184 146 63);
+  --bp-orange: rgb(230 126 34);
+  --bp-orange-light: rgb(243 156 18);
+  --bp-orange-dark: rgb(211 84 0);
+  --bp-cream: rgb(245 240 232);
+  --bp-cream-muted: rgb(120 110 95);
+
+  /* Shadows */
+  --shadow-2xs: 0 1px 2px 0px rgb(0 0 0 / 0.05);
+  --shadow-xs: 0 1px 3px 0px rgb(0 0 0 / 0.1);
+  --shadow-sm: 0 1px 3px 0px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow: 0 1px 3px 0px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+/* ============================================
+   DARK MODE - Deep dark with gold accents
+   ============================================ */
+.dark {
+  /* Background & Surfaces - Deep dark */
+  --background: rgb(13 13 13);
+  --foreground: rgb(245 240 232);
+  --card: rgb(26 26 26);
+  --card-foreground: rgb(245 240 232);
+  --popover: rgb(26 26 26);
+  --popover-foreground: rgb(245 240 232);
+
+  /* Primary - Gold */
+  --primary: rgb(212 168 75);
+  --primary-foreground: rgb(13 13 13);
+
+  /* Secondary - Orange */
+  --secondary: rgb(230 126 34);
+  --secondary-foreground: rgb(255 255 255);
+
+  /* Muted - Subtle dark surfaces */
+  --muted: rgb(37 37 37);
+  --muted-foreground: rgb(184 181 176);
+
+  /* Accent - Light gold for hover */
+  --accent: rgb(229 197 117);
+  --accent-foreground: rgb(13 13 13);
+
+  /* Destructive */
+  --destructive: rgb(231 76 60);
+  --destructive-foreground: rgb(255 255 255);
+
+  /* Success, Warning, Info */
+  --success: rgb(39 174 96);
+  --success-foreground: rgb(255 255 255);
+  --warning: rgb(243 156 18);
+  --warning-foreground: rgb(13 13 13);
+  --info: rgb(52 152 219);
+  --info-foreground: rgb(255 255 255);
+
+  /* Borders & Inputs */
+  --border: rgb(37 37 37);
+  --input: rgb(37 37 37);
+  --ring: rgb(212 168 75);
+
+  /* Charts - Balung Pisah palette */
+  --chart-1: rgb(212 168 75); /* Gold */
+  --chart-2: rgb(230 126 34); /* Orange */
+  --chart-3: rgb(52 152 219); /* Blue */
+  --chart-4: rgb(39 174 96); /* Green */
+  --chart-5: rgb(184 181 176); /* Cream Muted */
+
+  /* Sidebar - Dark with gold accents */
+  --sidebar: rgb(13 13 13);
+  --sidebar-foreground: rgb(245 240 232);
+  --sidebar-primary: rgb(212 168 75);
+  --sidebar-primary-foreground: rgb(13 13 13);
+  --sidebar-accent: rgb(37 37 37);
+  --sidebar-accent-foreground: rgb(245 240 232);
+  --sidebar-border: rgb(37 37 37);
+  --sidebar-ring: rgb(212 168 75);
+
+  /* Status Colors */
+  --status-submitted: rgb(149 165 166);
+  --status-review: rgb(52 152 219);
+  --status-marketplace: rgb(243 156 18);
+  --status-claimed: rgb(212 168 75);
+  --status-progress: rgb(155 89 182);
+  --status-completed: rgb(39 174 96);
+  --status-rejected: rgb(231 76 60);
+
+  /* Balung Pisah Custom Colors - Dark mode variants */
+  --bp-gold: rgb(212 168 75);
+  --bp-gold-light: rgb(229 197 117);
+  --bp-gold-dark: rgb(184 146 63);
+  --bp-orange: rgb(230 126 34);
+  --bp-orange-light: rgb(243 156 18);
+  --bp-orange-dark: rgb(211 84 0);
+  --bp-cream: rgb(245 240 232);
+  --bp-cream-muted: rgb(184 181 176);
+
+  /* Shadows - Subtle on dark backgrounds */
+  --shadow-2xs: 0 1px 2px 0px rgb(0 0 0 / 0.3);
+  --shadow-xs: 0 1px 3px 0px rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 1px 3px 0px rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow: 0 1px 3px 0px rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Success, Warning, Info */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  /* Balung Pisah custom color utilities */
+  --color-bp-gold: var(--bp-gold);
+  --color-bp-gold-light: var(--bp-gold-light);
+  --color-bp-gold-dark: var(--bp-gold-dark);
+  --color-bp-orange: var(--bp-orange);
+  --color-bp-orange-light: var(--bp-orange-light);
+  --color-bp-orange-dark: var(--bp-orange-dark);
+  --color-bp-cream: var(--bp-cream);
+  --color-bp-cream-muted: var(--bp-cream-muted);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Radius levels */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Shadows */
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    font-size: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ============================================
+   Component Overrides
+   ============================================ */
+@layer components {
+  /* Input Fields */
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='number'],
+  input[type='search'],
+  input[type='tel'],
+  input[type='url'],
+  textarea,
+  select,
+  [data-slot='select-trigger'] {
+    @apply transition-all duration-200;
+  }
+
+  /* Input Focus State - gold ring */
+  input[type='text']:focus,
+  input[type='email']:focus,
+  input[type='password']:focus,
+  input[type='number']:focus,
+  input[type='search']:focus,
+  input[type='tel']:focus,
+  input[type='url']:focus,
+  textarea:focus,
+  select:focus,
+  [data-slot='select-trigger']:focus {
+    @apply ring-primary/20 border-primary ring-4;
+  }
+
+  /* Button Base */
+  button:not(.unstyled) {
+    @apply font-semibold transition-all duration-200;
+    @apply active:scale-95;
+  }
+
+  /* Label */
+  label {
+    @apply text-sm font-semibold;
+  }
+
+  /* Remove number input spinner */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+/* ============================================
+   Custom Utility Classes
+   ============================================ */
+@layer utilities {
+  /* Status badge backgrounds */
+  .bg-status-submitted {
+    background-color: var(--status-submitted);
+  }
+  .bg-status-review {
+    background-color: var(--status-review);
+  }
+  .bg-status-marketplace {
+    background-color: var(--status-marketplace);
+  }
+  .bg-status-claimed {
+    background-color: var(--status-claimed);
+  }
+  .bg-status-progress {
+    background-color: var(--status-progress);
+  }
+  .bg-status-completed {
+    background-color: var(--status-completed);
+  }
+  .bg-status-rejected {
+    background-color: var(--status-rejected);
+  }
+
+  /* Text colors for status */
+  .text-status-submitted {
+    color: var(--status-submitted);
+  }
+  .text-status-review {
+    color: var(--status-review);
+  }
+  .text-status-marketplace {
+    color: var(--status-marketplace);
+  }
+  .text-status-claimed {
+    color: var(--status-claimed);
+  }
+  .text-status-progress {
+    color: var(--status-progress);
+  }
+  .text-status-completed {
+    color: var(--status-completed);
+  }
+  .text-status-rejected {
+    color: var(--status-rejected);
+  }
+
+  /* Line clamps */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  /* Custom Scrollbar - Gold accent */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(212, 168, 75, 0.3);
+    border-radius: 10px;
+    transition: background 0.2s;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 168, 75, 0.5);
+  }
+
+  /* Firefox scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 168, 75, 0.3) transparent;
+  }
+
+  /* Custom Animations */
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  /* Gradient text utility */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, rgb(212 168 75), rgb(229 197 117));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
