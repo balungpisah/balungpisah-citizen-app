@@ -1,6 +1,6 @@
-# Contributing to Web Citizen
+# Contributing to Balungpisah Citizen App
 
-Thank you for your interest in contributing to Web Citizen! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to Balungpisah Citizen App! This document provides guidelines and information for contributors.
 
 ## Getting Started
 
@@ -94,14 +94,9 @@ See [API Integration Guide](docs/development/API_INTEGRATION.md) for data fetchi
 - Use `useList` for collections
 - Use `useMutation` for create/update/delete
 
-### Frontend Guidelines
+### Forms
 
-Review [Frontend Guidelines](docs/development/FRONTEND_GUIDELINES.md) for:
-
-- Component patterns
-- Loading states
-- Error handling
-- Form guidelines
+See [Form Patterns](docs/development/FORM_PATTERNS.md) for validation and submission patterns.
 
 ## Reporting Issues
 

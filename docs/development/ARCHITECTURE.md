@@ -2,7 +2,7 @@
 
 ## Overview
 
-Citizen reporting platform built with Next.js 15 (App Router), TypeScript, Tailwind CSS v4, and shadcn/ui.
+Balungpisah Citizen App — web application for citizens to submit reports, track follow-ups, and monitor public issue resolution. Built with Next.js 15 (App Router), TypeScript, Tailwind CSS v4, and shadcn/ui.
 
 ## Development Phases
 
