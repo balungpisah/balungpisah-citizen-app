@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { ACCESS_TOKEN_COOKIE } from '@/features/auth/services/token-service';
-import { ChatView } from '@/features/citizen-report-agent/components/ChatView';
-import { ChatNavbar } from '@/features/home/components/ChatNavbar';
 import { LoginPrompt } from '@/features/home/components/LoginPrompt';
 
 // ============================================================================
@@ -53,16 +52,9 @@ export default async function Home() {
   const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE);
   const isAuthenticated = !!accessToken?.value;
 
-  // If authenticated, show full-screen chat with navigation
+  // If authenticated, redirect to /lapor
   if (isAuthenticated) {
-    return (
-      <div className="flex h-screen flex-col">
-        <ChatNavbar />
-        <div className="flex-1 overflow-hidden">
-          <ChatView showHeader={false} />
-        </div>
-      </div>
-    );
+    redirect('/lapor');
   }
 
   // If not authenticated, show login prompt

@@ -1,4 +1,5 @@
 import { ChatView } from '@/features/citizen-report-agent/components/ChatView';
+import { ChatNavbar } from '@/features/citizen-report-agent/components/ChatNavbar';
 
 interface LaporThreadPageProps {
   params: Promise<{
@@ -14,8 +15,11 @@ interface LaporThreadPageProps {
 export default async function LaporThreadPage({ params }: LaporThreadPageProps) {
   const { threadId } = await params;
   return (
-    <div className="h-screen">
-      <ChatView threadId={threadId} />
+    <div className="flex h-screen flex-col">
+      <ChatNavbar />
+      <div className="flex-1 overflow-hidden">
+        <ChatView threadId={threadId} showHeader={false} />
+      </div>
     </div>
   );
 }

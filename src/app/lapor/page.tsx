@@ -1,4 +1,5 @@
 import { ChatView } from '@/features/citizen-report-agent/components/ChatView';
+import { ChatNavbar } from '@/features/citizen-report-agent/components/ChatNavbar';
 
 /**
  * Lapor Page - New Conversation
@@ -7,8 +8,11 @@ import { ChatView } from '@/features/citizen-report-agent/components/ChatView';
  */
 export default function LaporPage() {
   return (
-    <div className="h-screen">
-      <ChatView />
+    <div className="flex h-screen flex-col">
+      <ChatNavbar />
+      <div className="flex-1 overflow-hidden">
+        <ChatView showHeader={false} />
+      </div>
     </div>
   );
 }
