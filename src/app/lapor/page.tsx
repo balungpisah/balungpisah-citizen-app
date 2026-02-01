@@ -6,5 +6,9 @@ import { ChatView } from '@/features/citizen-report-agent/components/ChatView';
  * Start a new conversation with the Citizen Report Agent.
  */
 export default function LaporPage() {
-  return <ChatView />;
+  return (
+    <div className="h-screen">
+      <ChatView />
+    </div>
+  );
 }

@@ -13,5 +13,9 @@ interface LaporThreadPageProps {
  */
 export default async function LaporThreadPage({ params }: LaporThreadPageProps) {
   const { threadId } = await params;
-  return <ChatView threadId={threadId} />;
+  return (
+    <div className="h-screen">
+      <ChatView threadId={threadId} />
+    </div>
+  );
 }

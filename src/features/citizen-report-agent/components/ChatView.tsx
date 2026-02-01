@@ -12,9 +12,11 @@ import { ChatInput } from './ChatInput';
 interface ChatViewProps {
   /** Thread ID if loading existing conversation, undefined for new */
   threadId?: string;
+  /** Whether to show the default header (default: true) */
+  showHeader?: boolean;
 }
 
-export function ChatView({ threadId: initialThreadId }: ChatViewProps) {
+export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatViewProps) {
   const router = useRouter();
 
   // Thread state
@@ -131,8 +133,8 @@ export function ChatView({ threadId: initialThreadId }: ChatViewProps) {
   // Loading state for history
   if (isLoadingHistory) {
     return (
-      <main className="bg-background flex h-screen flex-col overflow-hidden">
-        <ChatHeader title="Lapor Masalah" />
+      <main className="bg-background flex h-full flex-col overflow-hidden">
+        {showHeader && <ChatHeader title="Lapor Masalah" />}
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="text-primary size-8 animate-spin" />
@@ -146,8 +148,8 @@ export function ChatView({ threadId: initialThreadId }: ChatViewProps) {
   // Error state for history
   if (historyError) {
     return (
-      <main className="bg-background flex h-screen flex-col overflow-hidden">
-        <ChatHeader title="Lapor Masalah" />
+      <main className="bg-background flex h-full flex-col overflow-hidden">
+        {showHeader && <ChatHeader title="Lapor Masalah" />}
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col items-center gap-4 px-4 text-center">
             <p className="text-destructive">{historyError}</p>
@@ -164,8 +166,8 @@ export function ChatView({ threadId: initialThreadId }: ChatViewProps) {
   }
 
   return (
-    <main className="bg-background flex h-screen flex-col overflow-hidden">
-      <ChatHeader title="Lapor Masalah" />
+    <main className="bg-background flex h-full flex-col overflow-hidden">
+      {showHeader && <ChatHeader title="Lapor Masalah" />}
 
       <MessageList
         messages={messages}
