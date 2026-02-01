@@ -105,13 +105,13 @@ interface Iget_threadParams {
 
 interface Ilist_messagesParams {
   id: string;  // Thread ID (in: path) (uuid)
-  limit?: number | null;  // Maximum number of messages to return (default: 50, max: 200) (in: query) (min: 1, max: 200, int64)
-  offset?: number | null;  // Number of messages to skip (default: 0) (in: query) (min: 0, int64)
+  page?: number;  // Page number (1-indexed) (in: query) (min: 1, int64)
+  page_size?: number;  // Number of items per page (default: 50, max: 200) (in: query) (min: 1, max: 200, int64)
 }
 
 interface Ilist_threadsParams {
-  limit?: number | null;  // Maximum number of threads to return (default: 20, max: 100) (in: query) (min: 1, max: 100, int64)
-  offset?: number | null;  // Number of threads to skip (default: 0) (in: query) (min: 0, int64)
+  page?: number;  // Page number (1-indexed) (in: query) (min: 1, int64)
+  page_size?: number;  // Number of items per page (default: 10, max: 100) (in: query) (min: 1, max: 100, int64)
 }
 
 ```

@@ -10,6 +10,7 @@ API documentation for Balungpisah
 
 | Module               | Endpoints | File                                                 |
 | -------------------- | --------- | ---------------------------------------------------- |
+| Dashboard            | 8         | [dashboard.md](./dashboard.md)                       |
 | Auth                 | 4         | [auth.md](./auth.md)                                 |
 | Categories           | 2         | [categories.md](./categories.md)                     |
 | Citizen Report Agent | 5         | [citizen-report-agent.md](./citizen-report-agent.md) |
@@ -17,9 +18,10 @@ API documentation for Balungpisah
 | Expectations         | 1         | [expectations.md](./expectations.md)                 |
 | Files                | 2         | [files.md](./files.md)                               |
 | Regions              | 11        | [regions.md](./regions.md)                           |
+| Reports              | 5         | [reports.md](./reports.md)                           |
 | Tickets              | 3         | [tickets.md](./tickets.md)                           |
 | Users                | 3         | [users.md](./users.md)                               |
 
 ---
 
-_Total: 32 endpoints across 9 modules_
+_Total: 45 endpoints across 11 modules_
