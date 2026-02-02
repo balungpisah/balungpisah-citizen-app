@@ -2,6 +2,7 @@
 
 import { Send, MessageSquarePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AttachmentButton } from './AttachmentButton';
 
 interface ChatInputProps {
   value: string;
@@ -11,6 +12,11 @@ interface ChatInputProps {
   disabled?: boolean;
   placeholder?: string;
   showNewChatButton?: boolean;
+  // Attachment props
+  attachmentCount?: number;
+  canAddMoreAttachments?: boolean;
+  onFilesSelected?: (files: FileList) => void;
+  onOpenAttachments?: () => void;
 }
 
 export function ChatInput({
@@ -21,6 +27,10 @@ export function ChatInput({
   disabled = false,
   placeholder = 'Ceritakan masalah Anda...',
   showNewChatButton = false,
+  attachmentCount = 0,
+  canAddMoreAttachments = true,
+  onFilesSelected,
+  onOpenAttachments,
 }: ChatInputProps) {
   const canSend = value.trim() && !disabled;
 
@@ -37,6 +47,17 @@ export function ChatInput({
     <div className="bg-background border-border/50 shrink-0 border-t">
       <div className="mx-auto max-w-3xl px-4 py-3">
         <div className="bg-card flex items-end gap-2 rounded-2xl p-2">
+          {/* Attachment button */}
+          {onFilesSelected && onOpenAttachments && (
+            <AttachmentButton
+              count={attachmentCount}
+              canAddMore={canAddMoreAttachments}
+              onFilesSelected={onFilesSelected}
+              onOpenDrawer={onOpenAttachments}
+              disabled={disabled}
+            />
+          )}
+
           <textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}

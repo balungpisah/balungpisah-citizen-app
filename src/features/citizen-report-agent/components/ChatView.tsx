@@ -11,6 +11,8 @@ import type { IMessage, IContentBlock } from '../types';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
+import { AttachmentDrawer } from './AttachmentDrawer';
+import { useAttachments } from '../hooks/use-attachments';
 
 // ==================== History Transformation ====================
 
@@ -114,6 +116,22 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
   const updateMessageIfNotExists = useChatStore((state) => state.updateMessageIfNotExists);
   const startNewChat = useChatStore((state) => state.startNewChat);
 
+  // Attachments hook
+  const {
+    localAttachments,
+    serverAttachments,
+    isLoadingAttachments,
+    isDrawerOpen,
+    setDrawerOpen,
+    addFiles,
+    removeLocalFile,
+    removeServerFile,
+    uploadPendingAttachments,
+    retryUpload,
+    totalCount: attachmentCount,
+    canAddMore: canAddMoreAttachments,
+  } = useAttachments();
+
   // Chat stream hook
   const { sendMessage, isStreaming, isPending, streamingMessage, error } = useChatStream({
     threadId,
@@ -122,6 +140,14 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
     },
     onThreadCreated: (newThreadId) => {
       setThreadId(newThreadId);
+      // Upload pending attachments after thread is created
+      // Use store state directly to avoid stale closure
+      const currentPendingCount = useChatStore
+        .getState()
+        .localAttachments.filter((a) => a.status === 'pending').length;
+      if (currentPendingCount > 0) {
+        uploadPendingAttachments(newThreadId);
+      }
     },
     onError: (errorMsg) => {
       console.error('Chat error:', errorMsg);
@@ -319,6 +345,24 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
         onNewChat={handleNewChat}
         disabled={isStreaming || isPending}
         showNewChatButton={messages.length > 0 || !!threadId}
+        attachmentCount={attachmentCount}
+        canAddMoreAttachments={canAddMoreAttachments}
+        onFilesSelected={addFiles}
+        onOpenAttachments={() => setDrawerOpen(true)}
+      />
+
+      {/* Attachment drawer */}
+      <AttachmentDrawer
+        open={isDrawerOpen}
+        onOpenChange={setDrawerOpen}
+        localAttachments={localAttachments}
+        serverAttachments={serverAttachments}
+        isLoading={isLoadingAttachments}
+        onFilesSelected={addFiles}
+        onRemoveLocal={removeLocalFile}
+        onRemoveServer={removeServerFile}
+        onRetry={retryUpload}
+        canAddMore={canAddMoreAttachments}
       />
     </main>
   );
