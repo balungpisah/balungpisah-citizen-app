@@ -3,6 +3,7 @@
 import { memo } from 'react';
 import { User } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { TextBlock } from './blocks/TextBlock';
 import type { IMessage } from '../types';
 
 interface UserMessageProps {
@@ -36,7 +37,7 @@ function UserMessageComponent({ message }: UserMessageProps) {
       <div className="max-w-[80%]">
         {textContent && (
           <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-md p-4">
-            <p className="leading-relaxed whitespace-pre-wrap">{textContent}</p>
+            <TextBlock content={textContent} variant="user" />
           </div>
         )}
       </div>
