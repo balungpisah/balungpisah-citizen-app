@@ -1,7 +1,10 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-
-const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth_token';
+import { ACCESS_TOKEN_COOKIE } from '@/features/auth';
+import {
+  getAccessTokenFromLogto,
+  setAccessTokenOnCookieStore,
+} from '@/features/auth/utils/server-token';
 
 /**
  * Known providers and their environment variable names
@@ -90,21 +93,64 @@ function buildBackendUrl(
 }
 
 /**
- * Get authorization headers from cookies
+ * Check if Logto session cookies exist (prefix: logto_)
  */
-async function getAuthHeaders(): Promise<Record<string, string>> {
-  const cookieStore = await cookies();
-  const authToken = cookieStore.get(AUTH_COOKIE_NAME)?.value;
-
-  if (authToken) {
-    return { Authorization: `Bearer ${authToken}` };
-  }
-
-  return {};
+function hasLogtoSessionCookies(cookieStore: Awaited<ReturnType<typeof cookies>>): boolean {
+  const allCookies = cookieStore.getAll();
+  return allCookies.some((cookie) => cookie.name.startsWith('logto_'));
 }
 
 /**
- * Forward the request to the backend API
+ * Try to refresh token from Logto and update cookie
+ * Returns new token if successful, null otherwise
+ */
+async function tryRefreshToken(
+  cookieStore: Awaited<ReturnType<typeof cookies>>
+): Promise<string | null> {
+  if (!hasLogtoSessionCookies(cookieStore)) {
+    return null;
+  }
+
+  try {
+    const { accessToken, isAuthenticated } = await getAccessTokenFromLogto();
+
+    if (!isAuthenticated || !accessToken) {
+      return null;
+    }
+
+    // Update cookie with new token
+    setAccessTokenOnCookieStore(cookieStore, accessToken);
+
+    return accessToken;
+  } catch (error) {
+    console.error('[Proxy] Token refresh failed:', error);
+    return null;
+  }
+}
+
+/**
+ * Execute fetch request to backend
+ */
+async function executeBackendRequest(
+  backendUrl: string,
+  method: string,
+  headers: Record<string, string>,
+  body: string | undefined
+): Promise<Response> {
+  const fetchOptions: RequestInit = {
+    method,
+    headers,
+  };
+
+  if (body) {
+    fetchOptions.body = body;
+  }
+
+  return fetch(backendUrl, fetchOptions);
+}
+
+/**
+ * Forward the request to the backend API with auto-retry on 401
  */
 async function proxyRequest(
   request: NextRequest,
@@ -126,43 +172,70 @@ async function proxyRequest(
   }
 
   const backendUrl = backendUrlResult.url;
+  const cookieStore = await cookies();
 
-  const authHeaders = await getAuthHeaders();
+  // Get current access token
+  let authToken = cookieStore.get(ACCESS_TOKEN_COOKIE)?.value;
 
-  // Prepare headers - forward relevant headers from the original request
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    ...authHeaders,
-  };
+  // Prepare headers
+  const buildHeaders = (token: string | undefined): Record<string, string> => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    };
 
-  // Forward specific headers if present
-  const forwardHeaders = ['x-request-id', 'x-correlation-id'];
-  forwardHeaders.forEach((header) => {
-    const value = request.headers.get(header);
-    if (value) {
-      headers[header] = value;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
-  });
 
-  // Prepare fetch options
-  const fetchOptions: RequestInit = {
-    method,
-    headers,
+    // Forward specific headers if present
+    const forwardHeaders = ['x-request-id', 'x-correlation-id'];
+    forwardHeaders.forEach((header) => {
+      const value = request.headers.get(header);
+      if (value) {
+        headers[header] = value;
+      }
+    });
+
+    return headers;
   };
 
-  // Add body for non-GET requests
+  // Get request body for non-GET requests
+  let requestBody: string | undefined;
   if (method !== 'GET' && method !== 'HEAD') {
     try {
       const body = await request.json();
-      fetchOptions.body = JSON.stringify(body);
+      requestBody = JSON.stringify(body);
     } catch {
       // No body or invalid JSON - continue without body
     }
   }
 
   try {
-    const response = await fetch(backendUrl, fetchOptions);
+    // First attempt
+    let response = await executeBackendRequest(
+      backendUrl,
+      method,
+      buildHeaders(authToken),
+      requestBody
+    );
+
+    // If 401, try to refresh token and retry
+    if (response.status === 401) {
+      const newToken = await tryRefreshToken(cookieStore);
+
+      if (newToken) {
+        authToken = newToken;
+
+        // Retry with new token
+        response = await executeBackendRequest(
+          backendUrl,
+          method,
+          buildHeaders(authToken),
+          requestBody
+        );
+      }
+    }
 
     // Handle empty responses
     if (response.status === 204) {

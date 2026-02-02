@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
-interface LogtoContext {
-  isAuthenticated: boolean;
+interface AuthCheckResponse {
+  authenticated: boolean;
 }
 
 export default function AuthProcessingPage() {
@@ -15,17 +15,17 @@ export default function AuthProcessingPage() {
   useEffect(() => {
     async function processAuth() {
       try {
-        // Fetch user context to get auth state
-        const response = await fetch('/api/context');
+        // Check auth status and refresh token if needed
+        const response = await fetch('/api/auth/check');
 
         if (!response.ok) {
-          throw new Error('Gagal mengambil informasi pengguna');
+          throw new Error('Gagal memeriksa status autentikasi');
         }
 
-        const context: LogtoContext = await response.json();
+        const result: AuthCheckResponse = await response.json();
 
         // Check if user is authenticated
-        if (!context.isAuthenticated) {
+        if (!result.authenticated) {
           router.replace('/sign-in');
           return;
         }
