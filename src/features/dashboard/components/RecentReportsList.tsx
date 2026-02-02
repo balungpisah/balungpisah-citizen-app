@@ -82,7 +82,7 @@ export function RecentReportsList() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Laporan Terbaru</CardTitle>
+          <CardTitle className="text-base">Laporan Terbaru dari Warga</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="border-destructive/50 bg-destructive/10 rounded-lg border p-4 text-center">
@@ -105,11 +105,12 @@ export function RecentReportsList() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Laporan Terbaru</CardTitle>
+          <CardTitle className="text-base">Laporan Terbaru dari Warga</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground text-center text-sm">
-            Belum ada laporan dalam 7 hari terakhir
+            Belum ada laporan baru dalam 7 hari terakhir. Terima kasih atas kondisi lingkungan yang
+            kondusif!
           </p>
         </CardContent>
       </Card>
@@ -118,9 +119,12 @@ export function RecentReportsList() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Laporan Terbaru</CardTitle>
-        <span className="text-muted-foreground text-xs">7 hari terakhir</span>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base">Laporan Terbaru dari Warga</CardTitle>
+          <span className="text-muted-foreground text-xs">7 hari terakhir</span>
+        </div>
+        <p className="text-muted-foreground text-sm">Pantau perkembangan laporan yang masuk</p>
       </CardHeader>
       <CardContent>
         <div className="grid gap-3 sm:grid-cols-2">

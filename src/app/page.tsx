@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { ACCESS_TOKEN_COOKIE } from '@/features/auth/services/token-service';
 import { LoginPrompt } from '@/features/home/components/LoginPrompt';
 
@@ -52,11 +51,6 @@ export default async function Home() {
   const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE);
   const isAuthenticated = !!accessToken?.value;
 
-  // If authenticated, redirect to /lapor
-  if (isAuthenticated) {
-    redirect('/lapor');
-  }
-
-  // If not authenticated, show login prompt
-  return <LoginPrompt />;
+  // Show landing page for all users with appropriate CTAs
+  return <LoginPrompt isAuthenticated={isAuthenticated} />;
 }

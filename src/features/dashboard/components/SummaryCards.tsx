@@ -54,31 +54,31 @@ export function SummaryCards() {
 
   const stats = [
     {
-      label: 'Total Laporan',
+      label: 'Total Laporan Masuk',
       value: data.total_reports ?? 0,
       icon: <FileText className="h-5 w-5" />,
       colorClass: 'text-primary',
     },
     {
-      label: 'Menunggu',
+      label: 'Menunggu Tindak Lanjut',
       value: data.pending_count ?? 0,
       icon: <Clock className="h-5 w-5" />,
       colorClass: 'text-status-review',
     },
     {
-      label: 'Selesai',
+      label: 'Sudah Ditangani',
       value: data.resolved_count ?? 0,
       icon: <CheckCircle className="h-5 w-5" />,
       colorClass: 'text-status-completed',
     },
     {
-      label: 'Minggu Ini',
+      label: 'Laporan Minggu Ini',
       value: data.reports_this_week ?? 0,
       icon: <Calendar className="h-5 w-5" />,
       colorClass: 'text-secondary',
     },
     {
-      label: 'Bulan Ini',
+      label: 'Laporan Bulan Ini',
       value: data.reports_this_month ?? 0,
       icon: <CalendarDays className="h-5 w-5" />,
       colorClass: 'text-info',

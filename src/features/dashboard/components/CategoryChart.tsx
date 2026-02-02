@@ -81,6 +81,9 @@ export function CategoryChart() {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Laporan per Kategori</CardTitle>
+        <p className="text-muted-foreground text-sm">
+          Sebaran laporan berdasarkan jenis permasalahan
+        </p>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">

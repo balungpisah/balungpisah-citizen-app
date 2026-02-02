@@ -80,6 +80,9 @@ export function TagChart() {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Laporan per Prioritas</CardTitle>
+        <p className="text-muted-foreground text-sm">
+          Tingkat urgensi berdasarkan penilaian petugas
+        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
