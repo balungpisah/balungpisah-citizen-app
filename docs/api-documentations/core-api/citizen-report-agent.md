@@ -8,6 +8,7 @@
 | ------ | --------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------- | ---------------------- | ---------------------------------------------- |
 | POST   | `/api/citizen-report-agent/chat`                                            | Send a message and receive a streaming SSE response                        | -                          | `IChatRequestDto`      | -                                              |
 | POST   | `/api/citizen-report-agent/chat/sync`                                       | Send a message and receive a synchronous response (non-streaming fallback) | -                          | `IChatRequestDto`      | `IApiResponse_ChatResponseDto`                 |
+| GET    | `/api/citizen-report-agent/rate-limit`                                      | Get current user's rate limit status                                       | -                          | -                      | `IApiResponse_UserRateLimitStatusDto`          |
 | GET    | `/api/citizen-report-agent/threads`                                         | List user's conversation threads                                           | `Ilist_threadsParams`      | -                      | `IApiResponse_Vec_ThreadResponseDto`           |
 | GET    | `/api/citizen-report-agent/threads/{id}`                                    | Get thread details                                                         | `Iget_threadParams`        | -                      | `IApiResponse_ThreadDetailDto`                 |
 | GET    | `/api/citizen-report-agent/threads/{id}/messages`                           | List messages in a thread                                                  | `Ilist_messagesParams`     | -                      | `IApiResponse_Vec_MessageResponseDto`          |
@@ -55,6 +56,14 @@ interface IApiResponse_ThreadAttachmentResponseDto {
 
 interface IApiResponse_ThreadDetailDto {
   data?: IThreadDetailDto;  // Response DTO for thread details (includes message count)
+  errors?: string[] | null;
+  message?: string | null;
+  meta?: any | IMeta;
+  success: boolean;
+}
+
+interface IApiResponse_UserRateLimitStatusDto {
+  data?: IUserRateLimitStatusDto;  // Response DTO for user's rate limit status
   errors?: string[] | null;
   message?: string | null;
   meta?: any | IMeta;
@@ -158,6 +167,14 @@ interface IThreadResponseDto {
 
 interface IUploadAttachmentDto {
   file: string;  // The file to upload (binary)
+}
+
+interface IUserRateLimitStatusDto {
+  can_chat: boolean;  // Whether the user can still chat (hasn't reached the limit)
+  max_tickets: number;  // Maximum tickets allowed per day (int64)
+  resets_at: string;  // When the limit resets (next 00:00 WIB in UTC) (date-time)
+  tickets_remaining: number;  // Number of tickets remaining before hitting the limit (int64)
+  tickets_used: number;  // Number of tickets the user has created today (int64)
 }
 
 interface Icount_attachmentsParams {

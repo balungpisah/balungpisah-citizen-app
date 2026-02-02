@@ -4,14 +4,16 @@ import { useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowDown, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useOne } from '@/hooks/api/use-one';
 import { useAutoScroll } from '../hooks/use-auto-scroll';
 import { useChatStream } from '../hooks/use-chat-stream';
 import { useChatStore } from '../stores/chat-store';
-import type { IMessage, IContentBlock } from '../types';
+import type { IMessage, IContentBlock, IRateLimitStatus } from '../types';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { AttachmentDrawer } from './AttachmentDrawer';
+import { RateLimitNotice } from './RateLimitNotice';
 import { useAttachments } from '../hooks/use-attachments';
 
 // ==================== History Transformation ====================
@@ -115,6 +117,13 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
   const loadHistoryError = useChatStore((state) => state.loadHistoryError);
   const updateMessageIfNotExists = useChatStore((state) => state.updateMessageIfNotExists);
   const startNewChat = useChatStore((state) => state.startNewChat);
+
+  // Rate limit check - only for new chats (no existing thread)
+  const isNewChat = !initialThreadId;
+  const { data: rateLimitStatus, isLoading: isLoadingRateLimit } = useOne<IRateLimitStatus>({
+    resource: 'citizen-report-agent/rate-limit',
+    enabled: isNewChat,
+  });
 
   // Attachments hook
   const {
@@ -275,6 +284,31 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
     startNewChat();
     router.push('/lapor');
   };
+
+  // Loading state for rate limit check (new chats only)
+  if (isNewChat && isLoadingRateLimit) {
+    return (
+      <main className="bg-background flex h-full flex-col overflow-hidden">
+        {showHeader && <ChatHeader title="Lapor Masalah" />}
+        <div className="flex flex-1 items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="text-primary size-8 animate-spin" />
+            <p className="text-muted-foreground">Memeriksa kuota laporan...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Rate limited state (new chats only)
+  if (isNewChat && rateLimitStatus && !rateLimitStatus.can_chat) {
+    return (
+      <main className="bg-background flex h-full flex-col overflow-hidden">
+        {showHeader && <ChatHeader title="Lapor Masalah" />}
+        <RateLimitNotice status={rateLimitStatus} />
+      </main>
+    );
+  }
 
   // Loading state for history
   if (isLoadingHistory) {

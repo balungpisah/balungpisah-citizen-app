@@ -2,6 +2,21 @@
  * Citizen Report Agent Types
  */
 
+// ==================== Rate Limit Types ====================
+
+export interface IRateLimitStatus {
+  /** Whether the user can still chat (hasn't reached the limit) */
+  can_chat: boolean;
+  /** Maximum tickets allowed per day */
+  max_tickets: number;
+  /** When the limit resets (next 00:00 WIB in UTC) */
+  resets_at: string;
+  /** Number of tickets remaining before hitting the limit */
+  tickets_remaining: number;
+  /** Number of tickets the user has created today */
+  tickets_used: number;
+}
+
 // ==================== Message Types ====================
 
 export interface IContentBlock {

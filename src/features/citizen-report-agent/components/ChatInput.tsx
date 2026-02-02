@@ -46,7 +46,7 @@ export function ChatInput({
   return (
     <div className="bg-background border-border/50 shrink-0 border-t">
       <div className="mx-auto max-w-3xl px-4 py-3">
-        <div className="bg-card flex items-end gap-2 rounded-2xl p-2">
+        <div className="bg-card focus-within:ring-primary/50 flex items-end gap-2 rounded-2xl p-2 transition-shadow focus-within:ring-2">
           {/* Attachment button */}
           {onFilesSelected && onOpenAttachments && (
             <AttachmentButton
@@ -62,7 +62,7 @@ export function ChatInput({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
-            className="text-foreground placeholder:text-muted-foreground max-h-32 min-h-[44px] flex-1 resize-none border-none bg-transparent p-2 text-sm outline-none"
+            className="text-foreground placeholder:text-muted-foreground max-h-32 min-h-[44px] flex-1 resize-none border-none bg-transparent p-2 text-sm outline-none focus:ring-0 focus-visible:ring-0"
             rows={1}
             onKeyDown={handleKeyDown}
             disabled={disabled}
