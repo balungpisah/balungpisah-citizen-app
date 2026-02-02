@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import type { IMessage } from '../types';
+import type { ILocalAttachment, IThreadAttachment } from '../types/attachment';
+import { revokePreviewUrl } from '../types/attachment';
 
 /**
  * Chat status lifecycle:
@@ -23,6 +25,12 @@ interface ChatState {
   // History loading states
   isLoadingHistory: boolean;
   historyError: string | null;
+
+  // Attachment state
+  localAttachments: ILocalAttachment[];
+  serverAttachments: IThreadAttachment[];
+  isLoadingAttachments: boolean;
+  isDrawerOpen: boolean;
 }
 
 interface ChatActions {
@@ -46,6 +54,20 @@ interface ChatActions {
   // Composite actions
   startNewChat: () => void;
 
+  // Attachment actions
+  addLocalAttachment: (attachment: ILocalAttachment) => void;
+  addLocalAttachments: (attachments: ILocalAttachment[]) => void;
+  removeLocalAttachment: (id: string) => void;
+  updateLocalAttachment: (
+    id: string,
+    updates: Partial<Pick<ILocalAttachment, 'status' | 'progress' | 'error' | 'serverId'>>
+  ) => void;
+  clearLocalAttachments: () => void;
+  setServerAttachments: (attachments: IThreadAttachment[]) => void;
+  removeServerAttachment: (id: string) => void;
+  setLoadingAttachments: (loading: boolean) => void;
+  setDrawerOpen: (open: boolean) => void;
+
   // Reset
   reset: () => void;
 }
@@ -57,6 +79,10 @@ const initialState: ChatState = {
   inputValue: '',
   isLoadingHistory: false,
   historyError: null,
+  localAttachments: [],
+  serverAttachments: [],
+  isLoadingAttachments: false,
+  isDrawerOpen: false,
 };
 
 export const useChatStore = create<ChatState & ChatActions>((set) => ({
@@ -108,10 +134,63 @@ export const useChatStore = create<ChatState & ChatActions>((set) => ({
     }),
 
   // Composite actions
-  startNewChat: () => set(initialState),
+  startNewChat: () => {
+    // Cleanup preview URLs before clearing
+    const state = useChatStore.getState();
+    state.localAttachments.forEach(revokePreviewUrl);
+    set(initialState);
+  },
+
+  // Attachment actions
+  addLocalAttachment: (attachment) =>
+    set((state) => ({
+      localAttachments: [...state.localAttachments, attachment],
+    })),
+
+  addLocalAttachments: (attachments) =>
+    set((state) => ({
+      localAttachments: [...state.localAttachments, ...attachments],
+    })),
+
+  removeLocalAttachment: (id) =>
+    set((state) => {
+      const attachment = state.localAttachments.find((a) => a.id === id);
+      if (attachment) {
+        revokePreviewUrl(attachment);
+      }
+      return {
+        localAttachments: state.localAttachments.filter((a) => a.id !== id),
+      };
+    }),
+
+  updateLocalAttachment: (id, updates) =>
+    set((state) => ({
+      localAttachments: state.localAttachments.map((a) => (a.id === id ? { ...a, ...updates } : a)),
+    })),
+
+  clearLocalAttachments: () =>
+    set((state) => {
+      state.localAttachments.forEach(revokePreviewUrl);
+      return { localAttachments: [] };
+    }),
+
+  setServerAttachments: (serverAttachments) => set({ serverAttachments }),
+
+  removeServerAttachment: (id) =>
+    set((state) => ({
+      serverAttachments: state.serverAttachments.filter((a) => a.id !== id),
+    })),
+
+  setLoadingAttachments: (isLoadingAttachments) => set({ isLoadingAttachments }),
+
+  setDrawerOpen: (isDrawerOpen) => set({ isDrawerOpen }),
 
   // Reset
-  reset: () => set(initialState),
+  reset: () => {
+    const state = useChatStore.getState();
+    state.localAttachments.forEach(revokePreviewUrl);
+    set(initialState);
+  },
 }));
 
 /**
@@ -124,4 +203,14 @@ export const useChatInput = () =>
   useChatStore((state) => ({
     value: state.inputValue,
     setValue: state.setInputValue,
+  }));
+
+export const useLocalAttachments = () => useChatStore((state) => state.localAttachments);
+
+export const useServerAttachments = () => useChatStore((state) => state.serverAttachments);
+
+export const useAttachmentDrawer = () =>
+  useChatStore((state) => ({
+    isOpen: state.isDrawerOpen,
+    setOpen: state.setDrawerOpen,
   }));
