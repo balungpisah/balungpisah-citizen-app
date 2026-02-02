@@ -36,52 +36,57 @@ export function LoginPrompt({ isAuthenticated = false }: LandingPageProps) {
             akuntabilitas pemerintah desa.
           </p>
 
-          {/* Main CTAs */}
-          <div className="mb-6 grid gap-3 sm:grid-cols-2">
-            <Button
-              asChild
-              size="lg"
-              variant="secondary"
-              className="bg-secondary/80 hover:bg-secondary w-full"
-            >
-              <Link href="/dashboard" className="flex items-center justify-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Lihat Dashboard
-              </Link>
-            </Button>
-            <Button asChild size="lg" className="w-full">
-              <Link
-                href={isAuthenticated ? '/lapor' : '/api/auth/sign-in'}
-                className="flex items-center justify-center gap-2"
-              >
-                <MessageSquarePlus className="h-5 w-5" />
-                Buat Laporan
-              </Link>
-            </Button>
-          </div>
-
-          {/* Auth Section - Only show when not authenticated */}
-          {!isAuthenticated && (
-            <div className="border-border/50 rounded-lg border p-4">
-              <p className="text-muted-foreground mb-3 text-sm">
-                Sudah punya akun? Masuk untuk melaporkan dan melacak laporanmu.
-              </p>
-              <div className="flex gap-3">
-                <Button asChild variant="secondary" size="sm" className="flex-1">
-                  <Link href="/api/auth/sign-in">Masuk</Link>
+          {/* CTAs */}
+          {isAuthenticated ? (
+            <>
+              <div className="mb-6 grid gap-3 sm:grid-cols-2">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="secondary"
+                  className="bg-secondary/80 hover:bg-secondary w-full"
+                >
+                  <Link href="/dashboard" className="flex items-center justify-center gap-2">
+                    <BarChart3 className="h-5 w-5" />
+                    Lihat Dashboard
+                  </Link>
                 </Button>
-                <Button asChild variant="ghost" size="sm" className="flex-1">
-                  <Link href="/api/auth/sign-up">Daftar</Link>
+                <Button asChild size="lg" className="w-full">
+                  <Link href="/lapor" className="flex items-center justify-center gap-2">
+                    <MessageSquarePlus className="h-5 w-5" />
+                    Buat Laporan
+                  </Link>
                 </Button>
               </div>
-            </div>
-          )}
-
-          {/* Authenticated greeting */}
-          {isAuthenticated && (
-            <p className="text-muted-foreground text-sm">
-              Kamu sudah masuk. Buat laporan baru atau lihat dashboard.
-            </p>
+            </>
+          ) : (
+            <>
+              <div className="mb-4 flex flex-col gap-3">
+                <Button asChild size="lg" className="w-full">
+                  <Link href="/api/auth/sign-in" className="flex items-center justify-center gap-2">
+                    <MessageSquarePlus className="h-5 w-5" />
+                    Masuk untuk Lapor
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="secondary"
+                  className="bg-secondary/80 hover:bg-secondary w-full"
+                >
+                  <Link href="/dashboard" className="flex items-center justify-center gap-2">
+                    <BarChart3 className="h-5 w-5" />
+                    Lihat Dashboard
+                  </Link>
+                </Button>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Belum punya akun?{' '}
+                <Link href="/api/auth/sign-up" className="text-primary hover:underline">
+                  Daftar di sini
+                </Link>
+              </p>
+            </>
           )}
         </div>
       </main>
