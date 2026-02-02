@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 
 interface AuthCheckResponse {
   authenticated: boolean;
+  redirectPath: string | null;
 }
 
 export default function AuthProcessingPage() {
@@ -30,8 +31,9 @@ export default function AuthProcessingPage() {
           return;
         }
 
-        // Redirect to home page
-        router.replace('/');
+        // Redirect to saved path or default to dashboard
+        const destination = result.redirectPath || '/dashboard';
+        router.replace(destination);
       } catch (err) {
         console.error('Error processing auth:', err);
         setError('Terjadi kesalahan saat memproses autentikasi');
