@@ -9,10 +9,7 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-// Cookie names (must match token-service.ts)
-const ACCESS_TOKEN_COOKIE = 'citizen_access_token';
-const REDIRECT_PATH_COOKIE = 'citizen_redirect_path';
+import { ACCESS_TOKEN_COOKIE, REDIRECT_PATH_COOKIE } from '@/features/auth/constants';
 
 // Routes that require authentication
 const PROTECTED_ROUTES = ['/dashboard/reports', '/lapor'];

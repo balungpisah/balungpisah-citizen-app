@@ -5,23 +5,14 @@
  * Client cannot read tokens directly - all auth is handled server-side.
  *
  * This service provides:
- * - Constants for cookie names
  * - Auth check via /api/auth/check endpoint (lightweight, only checks token existence)
  * - Cached auth status to avoid repeated API calls
  */
 
-// =============================================================================
-// CONSTANTS (shared with server-side proxy)
-// =============================================================================
+import { AUTH_CACHE_TTL } from '../constants';
 
-/** Cookie name for access token (httpOnly) */
-export const ACCESS_TOKEN_COOKIE = 'citizen_access_token';
-
-/** Cookie name for storing intended redirect path after login */
-export const REDIRECT_PATH_COOKIE = 'citizen_redirect_path';
-
-/** Buffer time (seconds) before expiration to trigger refresh */
-export const REFRESH_BUFFER_SECONDS = 5 * 60; // 5 minutes
+// Re-export constants for backward compatibility
+export { ACCESS_TOKEN_COOKIE, REDIRECT_PATH_COOKIE, REFRESH_BUFFER_SECONDS } from '../constants';
 
 // =============================================================================
 // STATE
@@ -29,9 +20,6 @@ export const REFRESH_BUFFER_SECONDS = 5 * 60; // 5 minutes
 
 /** Cache for auth status to avoid repeated calls */
 let authStatusCache: { isAuthenticated: boolean; timestamp: number } | null = null;
-
-/** Cache TTL in milliseconds */
-const AUTH_CACHE_TTL = 30 * 1000; // 30 seconds
 
 // =============================================================================
 // AUTH STATUS (via server call)

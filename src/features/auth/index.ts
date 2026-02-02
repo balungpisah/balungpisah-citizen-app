@@ -6,11 +6,16 @@
  * Import server utilities directly: '@/features/auth/utils/server-token'
  */
 
-// Services
+// Constants (safe for Edge runtime / middleware)
 export {
   ACCESS_TOKEN_COOKIE,
   REDIRECT_PATH_COOKIE,
   REFRESH_BUFFER_SECONDS,
+  AUTH_CACHE_TTL,
+} from './constants';
+
+// Services
+export {
   checkAuthStatus,
   isAuthenticated,
   refreshAuthStatus,
