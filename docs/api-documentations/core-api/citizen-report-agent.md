@@ -4,21 +4,49 @@
 
 ## API Endpoints
 
-| Method | Endpoint                                          | Description                                                                                                         | Parameters             | Request Body      | Response                              |
-| ------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------- | ----------------- | ------------------------------------- |
-| POST   | `/api/citizen-report-agent/chat`                  | POST /api/citizen-report-agent/chat Send a message and receive a streaming SSE response                             | -                      | `IChatRequestDto` | -                                     |
-| POST   | `/api/citizen-report-agent/chat/sync`             | POST /api/citizen-report-agent/chat/sync Send a message and receive a synchronous response (non-streaming fallback) | -                      | `IChatRequestDto` | `IApiResponse_ChatResponseDto`        |
-| GET    | `/api/citizen-report-agent/threads`               | GET /api/citizen-report-agent/threads List user's conversation threads                                              | `Ilist_threadsParams`  | -                 | `IApiResponse_Vec_ThreadResponseDto`  |
-| GET    | `/api/citizen-report-agent/threads/{id}`          | GET /api/citizen-report-agent/threads/{id} Get thread details                                                       | `Iget_threadParams`    | -                 | `IApiResponse_ThreadDetailDto`        |
-| GET    | `/api/citizen-report-agent/threads/{id}/messages` | GET /api/citizen-report-agent/threads/{id}/messages List messages in a thread                                       | `Ilist_messagesParams` | -                 | `IApiResponse_Vec_MessageResponseDto` |
+| Method | Endpoint                                                                    | Description                                                                | Parameters                 | Request Body           | Response                                       |
+| ------ | --------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------- | ---------------------- | ---------------------------------------------- |
+| POST   | `/api/citizen-report-agent/chat`                                            | Send a message and receive a streaming SSE response                        | -                          | `IChatRequestDto`      | -                                              |
+| POST   | `/api/citizen-report-agent/chat/sync`                                       | Send a message and receive a synchronous response (non-streaming fallback) | -                          | `IChatRequestDto`      | `IApiResponse_ChatResponseDto`                 |
+| GET    | `/api/citizen-report-agent/threads`                                         | List user's conversation threads                                           | `Ilist_threadsParams`      | -                      | `IApiResponse_Vec_ThreadResponseDto`           |
+| GET    | `/api/citizen-report-agent/threads/{id}`                                    | Get thread details                                                         | `Iget_threadParams`        | -                      | `IApiResponse_ThreadDetailDto`                 |
+| GET    | `/api/citizen-report-agent/threads/{id}/messages`                           | List messages in a thread                                                  | `Ilist_messagesParams`     | -                      | `IApiResponse_Vec_MessageResponseDto`          |
+| GET    | `/api/citizen-report-agent/threads/{thread_id}/attachments`                 | List all attachments for a thread                                          | `Ilist_attachmentsParams`  | -                      | `IApiResponse_Vec_ThreadAttachmentResponseDto` |
+| POST   | `/api/citizen-report-agent/threads/{thread_id}/attachments`                 | Upload an attachment to a thread                                           | `Iupload_attachmentParams` | `IUploadAttachmentDto` | `IApiResponse_ThreadAttachmentResponseDto`     |
+| GET    | `/api/citizen-report-agent/threads/{thread_id}/attachments/count`           | Get attachment count for a thread                                          | `Icount_attachmentsParams` | -                      | `IApiResponse_AttachmentCountDto`              |
+| DELETE | `/api/citizen-report-agent/threads/{thread_id}/attachments/{attachment_id}` | Delete an attachment from a thread                                         | `Idelete_attachmentParams` | -                      | `IApiResponse_DeleteAttachmentResponseDto`     |
 
 ---
 
 ## TypeScript Interfaces
 
 ```typescript
+interface IApiResponse_AttachmentCountDto {
+  data?: IAttachmentCountDto;  // DTO for attachment count information
+  errors?: string[] | null;
+  message?: string | null;
+  meta?: any | IMeta;
+  success: boolean;
+}
+
 interface IApiResponse_ChatResponseDto {
   data?: IChatResponseDto;  // Response DTO for synchronous chat
+  errors?: string[] | null;
+  message?: string | null;
+  meta?: any | IMeta;
+  success: boolean;
+}
+
+interface IApiResponse_DeleteAttachmentResponseDto {
+  data?: IDeleteAttachmentResponseDto;  // Response DTO for delete attachment operations
+  errors?: string[] | null;
+  message?: string | null;
+  meta?: any | IMeta;
+  success: boolean;
+}
+
+interface IApiResponse_ThreadAttachmentResponseDto {
+  data?: IThreadAttachmentResponseDto;  // Response DTO for thread attachment
   errors?: string[] | null;
   message?: string | null;
   meta?: any | IMeta;
@@ -41,12 +69,26 @@ interface IApiResponse_Vec_MessageResponseDto {
   success: boolean;
 }
 
+interface IApiResponse_Vec_ThreadAttachmentResponseDto {
+  data?: IThreadAttachmentResponseDto[];
+  errors?: string[] | null;
+  message?: string | null;
+  meta?: any | IMeta;
+  success: boolean;
+}
+
 interface IApiResponse_Vec_ThreadResponseDto {
   data?: IThreadResponseDto[];
   errors?: string[] | null;
   message?: string | null;
   meta?: any | IMeta;
   success: boolean;
+}
+
+interface IAttachmentCountDto {
+  can_upload: boolean;  // Whether more attachments can be uploaded
+  count: number;  // Current number of attachments in the thread (int64)
+  max_allowed: number;  // Maximum allowed attachments per thread (int64)
 }
 
 interface IChatRequestDto {
@@ -68,11 +110,15 @@ interface IChatResponseDto {
   thread_id: string;  // The thread ID (useful if a new thread was created) (uuid)
 }
 
+interface IDeleteAttachmentResponseDto {
+  deleted: boolean;  // Confirmation that the attachment was deleted
+}
+
 interface IMessageContentInput {
 }
 
 interface IMessageResponseDto {
-  content: string;  // Message content (text)
+  content: any;  // Message content - can be a string or array of content blocks (text, tool_use, tool_result)
   created_at: string;  // When the message was created (date-time)
   episode_id?: string | null;  // TensorZero episode ID (for assistant messages) (uuid)
   id: string;  // Message ID (uuid)
@@ -82,6 +128,17 @@ interface IMessageResponseDto {
 
 interface IMeta {
   total: number;  // (int64)
+}
+
+interface IThreadAttachmentResponseDto {
+  content_type: string;  // MIME type of the file
+  created_at: string;  // Timestamp when the attachment was created (date-time)
+  file_id: string;  // File ID reference (uuid)
+  file_size: number;  // Size of the file in bytes (int64)
+  id: string;  // Unique identifier for the attachment (uuid)
+  original_filename: string;  // Original filename
+  thread_id: string;  // Thread ID this attachment belongs to (uuid)
+  url: string;  // URL to access the file (presigned URL for private files)
 }
 
 interface IThreadDetailDto {
@@ -99,8 +156,25 @@ interface IThreadResponseDto {
   updated_at: string;  // When the thread was last updated (date-time)
 }
 
+interface IUploadAttachmentDto {
+  file: string;  // The file to upload (binary)
+}
+
+interface Icount_attachmentsParams {
+  thread_id: string;  // Thread ID (in: path) (uuid)
+}
+
+interface Idelete_attachmentParams {
+  attachment_id: string;  // Attachment ID (in: path) (uuid)
+  thread_id: string;  // Thread ID (in: path) (uuid)
+}
+
 interface Iget_threadParams {
   id: string;  // Thread ID (in: path) (uuid)
+}
+
+interface Ilist_attachmentsParams {
+  thread_id: string;  // Thread ID (in: path) (uuid)
 }
 
 interface Ilist_messagesParams {
@@ -112,6 +186,10 @@ interface Ilist_messagesParams {
 interface Ilist_threadsParams {
   page?: number;  // Page number (1-indexed) (in: query) (min: 1, int64)
   page_size?: number;  // Number of items per page (default: 10, max: 100) (in: query) (min: 1, max: 100, int64)
+}
+
+interface Iupload_attachmentParams {
+  thread_id: string;  // Thread ID (in: path) (uuid)
 }
 
 ```

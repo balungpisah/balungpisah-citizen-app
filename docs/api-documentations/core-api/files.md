@@ -15,7 +15,7 @@
 
 ```typescript
 interface IApiResponse_DeleteFileResponseDto {
-  data?: IDeleteFileResponseDto; // Response DTO for delete operations
+  data?: IDeleteAttachmentResponseDto; // Response DTO for delete operations
   errors?: string[] | null;
   message?: string | null;
   meta?: any | IMeta;
@@ -30,12 +30,12 @@ interface IApiResponse_FileResponseDto {
   success: boolean;
 }
 
-interface IDeleteFileByUrlDto {
-  url: string; // The URL of the file to delete
+interface IDeleteAttachmentResponseDto {
+  deleted: boolean; // Confirmation that the attachment was deleted
 }
 
-interface IDeleteFileResponseDto {
-  deleted: boolean; // Confirmation that the file was deleted
+interface IDeleteFileByUrlDto {
+  url: string; // The URL of the file to delete
 }
 
 interface IFileResponseDto {

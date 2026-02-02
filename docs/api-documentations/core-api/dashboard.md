@@ -10,6 +10,7 @@
 | GET    | `/api/dashboard/by-location`  | Get location overview (provinces -> regencies -> reports) | `Iget_by_locationParams` | -            | `IApiResponse_DashboardLocationOverviewDto` |
 | GET    | `/api/dashboard/by-tag`       | Get tag overview with optional report listing             | `Iget_by_tagParams`      | -            | `IApiResponse_DashboardTagOverviewDto`      |
 | GET    | `/api/dashboard/map`          | Get map markers for reports with coordinates              | `Iget_mapParams`         | -            | `IApiResponse_DashboardMapDto`              |
+| GET    | `/api/dashboard/map-data`     | -                                                         | `Iget_map_dataParams`    | -            | `IApiResponse_DashboardMapDataDto`          |
 | GET    | `/api/dashboard/recent`       | Get recent reports (last N days)                          | `Iget_recentParams`      | -            | `IApiResponse_DashboardRecentDto`           |
 | GET    | `/api/dashboard/reports`      | List all reports with pagination                          | `Ilist_reportsParams`    | -            | `IApiResponse_Vec_DashboardReportDto`       |
 | GET    | `/api/dashboard/reports/{id}` | Get single report detail                                  | `Iget_reportParams`      | -            | `IApiResponse_DashboardReportDetailDto`     |
@@ -30,6 +31,14 @@ interface IApiResponse_DashboardCategoryOverviewDto {
 
 interface IApiResponse_DashboardLocationOverviewDto {
   data?: IDashboardLocationOverviewDto; // Location overview with provinces and optional regencies
+  errors?: string[] | null;
+  message?: string | null;
+  meta?: any | IMeta;
+  success: boolean;
+}
+
+interface IApiResponse_DashboardMapDataDto {
+  data?: IDashboardMapDataDto;
   errors?: string[] | null;
   message?: string | null;
   meta?: any | IMeta;
@@ -107,6 +116,10 @@ interface IDashboardLocationOverviewDto {
   reports?: IDashboardReportDto[] | null; // Reports (only if regency_id filter applied)
 }
 
+interface IDashboardMapDataDto {
+  points: IMapPointDto[];
+}
+
 interface IDashboardMapDto {
   bounds?: number[] | null; // Bounding box [min_lat, min_lon, max_lat, max_lon]
   markers: IMapReportMarker[];
@@ -162,6 +175,14 @@ interface IDashboardTagOverviewDto {
   pagination?: any | IPaginationMeta;
   reports?: IDashboardReportDto[] | null; // Reports (only if tag_type filter applied)
   tags: ITagReportSummary[];
+}
+
+interface IMapPointDto {
+  category_color?: string | null;
+  id: string; // (uuid)
+  lat: number; // (double)
+  lon: number; // (double)
+  status: IReportStatus;
 }
 
 interface IMapReportMarker {
@@ -265,6 +286,13 @@ interface Iget_mapParams {
   province_id?: string | null; // Filter by province ID (in: query) (uuid)
   regency_id?: string | null; // Filter by regency ID (in: query) (uuid)
   status?: any | IReportStatus; // Filter by status (in: query)
+}
+
+interface Iget_map_dataParams {
+  page?: number; // Page number (1-indexed) (in: query) (min: 1, int64)
+  page_size?: number; // Number of items per page (in: query) (min: 1, max: 100, int64)
+  province_id?: string | null; // Filter by province ID (in: query) (uuid)
+  regency_id?: string | null; // Filter by regency ID (in: query) (uuid)
 }
 
 interface Iget_recentParams {
