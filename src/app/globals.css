@@ -80,12 +80,11 @@
   --sidebar-ring: rgb(212 168 75);
 
   /* Status Colors */
-  --status-submitted: rgb(149 165 166);
-  --status-review: rgb(52 152 219);
-  --status-marketplace: rgb(243 156 18);
-  --status-claimed: rgb(212 168 75);
-  --status-progress: rgb(155 89 182);
-  --status-completed: rgb(39 174 96);
+  --status-draft: rgb(149 165 166);
+  --status-pending: rgb(243 156 18);
+  --status-verified: rgb(52 152 219);
+  --status-in-progress: rgb(155 89 182);
+  --status-resolved: rgb(39 174 96);
   --status-rejected: rgb(231 76 60);
 
   /* Balung Pisah Custom Colors */
@@ -172,12 +171,11 @@
   --sidebar-ring: rgb(212 168 75);
 
   /* Status Colors */
-  --status-submitted: rgb(149 165 166);
-  --status-review: rgb(52 152 219);
-  --status-marketplace: rgb(243 156 18);
-  --status-claimed: rgb(212 168 75);
-  --status-progress: rgb(155 89 182);
-  --status-completed: rgb(39 174 96);
+  --status-draft: rgb(149 165 166);
+  --status-pending: rgb(243 156 18);
+  --status-verified: rgb(52 152 219);
+  --status-in-progress: rgb(155 89 182);
+  --status-resolved: rgb(39 174 96);
   --status-rejected: rgb(231 76 60);
 
   /* Balung Pisah Custom Colors - Dark mode variants */
@@ -349,46 +347,40 @@
    ============================================ */
 @layer utilities {
   /* Status badge backgrounds */
-  .bg-status-submitted {
-    background-color: var(--status-submitted);
+  .bg-status-draft {
+    background-color: var(--status-draft);
   }
-  .bg-status-review {
-    background-color: var(--status-review);
+  .bg-status-pending {
+    background-color: var(--status-pending);
   }
-  .bg-status-marketplace {
-    background-color: var(--status-marketplace);
+  .bg-status-verified {
+    background-color: var(--status-verified);
   }
-  .bg-status-claimed {
-    background-color: var(--status-claimed);
+  .bg-status-in-progress {
+    background-color: var(--status-in-progress);
   }
-  .bg-status-progress {
-    background-color: var(--status-progress);
-  }
-  .bg-status-completed {
-    background-color: var(--status-completed);
+  .bg-status-resolved {
+    background-color: var(--status-resolved);
   }
   .bg-status-rejected {
     background-color: var(--status-rejected);
   }
 
   /* Text colors for status */
-  .text-status-submitted {
-    color: var(--status-submitted);
+  .text-status-draft {
+    color: var(--status-draft);
   }
-  .text-status-review {
-    color: var(--status-review);
+  .text-status-pending {
+    color: var(--status-pending);
   }
-  .text-status-marketplace {
-    color: var(--status-marketplace);
+  .text-status-verified {
+    color: var(--status-verified);
   }
-  .text-status-claimed {
-    color: var(--status-claimed);
+  .text-status-in-progress {
+    color: var(--status-in-progress);
   }
-  .text-status-progress {
-    color: var(--status-progress);
-  }
-  .text-status-completed {
-    color: var(--status-completed);
+  .text-status-resolved {
+    color: var(--status-resolved);
   }
   .text-status-rejected {
     color: var(--status-rejected);
