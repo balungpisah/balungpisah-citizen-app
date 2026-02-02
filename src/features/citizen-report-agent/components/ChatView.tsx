@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useChatStream } from '../hooks/use-chat-stream';
+import { useChatStore } from '../stores/chat-store';
 import type { IMessage, IContentBlock } from '../types';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
@@ -18,27 +19,30 @@ interface ChatViewProps {
 
 export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatViewProps) {
   const router = useRouter();
+  const initializedRef = useRef(false);
 
-  // Thread state
-  const [threadId, setThreadId] = useState<string | null>(initialThreadId || null);
+  // Store state - use selectors to avoid unnecessary re-renders
+  const threadId = useChatStore((state) => state.threadId);
+  const messages = useChatStore((state) => state.messages);
+  const inputValue = useChatStore((state) => state.inputValue);
+  const isLoadingHistory = useChatStore((state) => state.isLoadingHistory);
+  const historyError = useChatStore((state) => state.historyError);
 
-  // History loading state
-  const [isLoadingHistory, setIsLoadingHistory] = useState(!!initialThreadId);
-  const [historyError, setHistoryError] = useState<string | null>(null);
-
-  // Conversation state
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  // Store actions - these are stable references
+  const setThreadId = useChatStore((state) => state.setThreadId);
+  const addMessage = useChatStore((state) => state.addMessage);
+  const setInputValue = useChatStore((state) => state.setInputValue);
+  const loadHistoryStart = useChatStore((state) => state.loadHistoryStart);
+  const loadHistorySuccess = useChatStore((state) => state.loadHistorySuccess);
+  const loadHistoryError = useChatStore((state) => state.loadHistoryError);
+  const updateMessageIfNotExists = useChatStore((state) => state.updateMessageIfNotExists);
+  const startNewChat = useChatStore((state) => state.startNewChat);
 
   // Chat stream hook
   const { sendMessage, isStreaming, isPending, streamingMessage, error } = useChatStream({
     threadId,
     onMessageComplete: (message) => {
-      setMessages((prev) => {
-        const exists = prev.some((m) => m.id === message.id);
-        if (exists) return prev;
-        return [...prev, message];
-      });
+      updateMessageIfNotExists(message);
     },
     onThreadCreated: (newThreadId) => {
       setThreadId(newThreadId);
@@ -48,6 +52,19 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
     },
   });
 
+  // Initialize thread from props - only run once
+  useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    if (initialThreadId) {
+      setThreadId(initialThreadId);
+    } else {
+      // New chat page - ensure clean state
+      startNewChat();
+    }
+  }, [initialThreadId, setThreadId, startNewChat]);
+
   // Update URL when threadId changes (new thread created)
   useEffect(() => {
     if (threadId && !initialThreadId) {
@@ -56,52 +73,54 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
   }, [threadId, initialThreadId]);
 
   // Load message history
-  const loadHistory = useCallback(async (tid: string) => {
-    setIsLoadingHistory(true);
-    setHistoryError(null);
+  const loadHistory = useCallback(
+    async (tid: string) => {
+      loadHistoryStart();
 
-    try {
-      const response = await fetch(
-        `/api/proxy/core/citizen-report-agent/threads/${tid}/messages?page_size=100`
-      );
-
-      if (!response.ok) {
-        throw new Error('Gagal memuat riwayat percakapan');
-      }
-
-      const result = await response.json();
-      if (result.success && result.data) {
-        const rawMessages: IMessage[] = result.data.map(
-          (msg: {
-            id: string;
-            thread_id: string;
-            role: string;
-            content: string | IContentBlock[];
-            created_at: string;
-          }) => ({
-            id: msg.id,
-            thread_id: msg.thread_id,
-            role: msg.role as 'user' | 'assistant',
-            content:
-              typeof msg.content === 'string'
-                ? [{ type: 'text' as const, text: msg.content }]
-                : msg.content,
-            created_at: msg.created_at,
-          })
+      try {
+        const response = await fetch(
+          `/api/proxy/core/citizen-report-agent/threads/${tid}/messages?page_size=100`
         );
 
-        rawMessages.sort(
-          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
+        if (!response.ok) {
+          throw new Error('Gagal memuat riwayat percakapan');
+        }
 
-        setMessages(rawMessages);
+        const result = await response.json();
+        if (result.success && result.data) {
+          const rawMessages: IMessage[] = result.data.map(
+            (msg: {
+              id: string;
+              thread_id: string;
+              role: string;
+              content: string | IContentBlock[];
+              created_at: string;
+            }) => ({
+              id: msg.id,
+              thread_id: msg.thread_id,
+              role: msg.role as 'user' | 'assistant',
+              content:
+                typeof msg.content === 'string'
+                  ? [{ type: 'text' as const, text: msg.content }]
+                  : msg.content,
+              created_at: msg.created_at,
+            })
+          );
+
+          rawMessages.sort(
+            (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
+
+          loadHistorySuccess(rawMessages);
+        } else {
+          loadHistorySuccess([]);
+        }
+      } catch (err) {
+        loadHistoryError(err instanceof Error ? err.message : 'Terjadi kesalahan');
       }
-    } catch (err) {
-      setHistoryError(err instanceof Error ? err.message : 'Terjadi kesalahan');
-    } finally {
-      setIsLoadingHistory(false);
-    }
-  }, []);
+    },
+    [loadHistoryStart, loadHistorySuccess, loadHistoryError]
+  );
 
   // Load history on mount if threadId provided
   useEffect(() => {
@@ -124,10 +143,15 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
       content: [{ type: 'text', text: messageContent }],
       created_at: new Date().toISOString(),
     };
-    setMessages((prev) => [...prev, userMessage]);
+    addMessage(userMessage);
 
     // Send to API
     await sendMessage(messageContent, userMessage.id);
+  };
+
+  const handleNewChat = () => {
+    startNewChat();
+    router.push('/lapor');
   };
 
   // Loading state for history
@@ -153,10 +177,7 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col items-center gap-4 px-4 text-center">
             <p className="text-destructive">{historyError}</p>
-            <button
-              onClick={() => router.push('/lapor')}
-              className="text-primary text-sm hover:underline"
-            >
+            <button onClick={handleNewChat} className="text-primary text-sm hover:underline">
               Mulai percakapan baru
             </button>
           </div>
@@ -180,7 +201,9 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
         value={inputValue}
         onChange={setInputValue}
         onSend={handleSendMessage}
+        onNewChat={handleNewChat}
         disabled={isStreaming || isPending}
+        showNewChatButton={messages.length > 0 || !!threadId}
       />
     </main>
   );

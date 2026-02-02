@@ -1,22 +1,26 @@
 'use client';
 
-import { Send } from 'lucide-react';
+import { Send, MessageSquarePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
+  onNewChat?: () => void;
   disabled?: boolean;
   placeholder?: string;
+  showNewChatButton?: boolean;
 }
 
 export function ChatInput({
   value,
   onChange,
   onSend,
+  onNewChat,
   disabled = false,
   placeholder = 'Ceritakan masalah Anda...',
+  showNewChatButton = false,
 }: ChatInputProps) {
   const canSend = value.trim() && !disabled;
 
@@ -32,7 +36,7 @@ export function ChatInput({
   return (
     <div className="bg-background border-card sticky bottom-0 border-t">
       <div className="mx-auto max-w-3xl px-4 py-4">
-        <div className="bg-card flex items-end gap-3 rounded-2xl p-2">
+        <div className="bg-card flex items-end gap-2 rounded-2xl p-2">
           <textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
@@ -42,13 +46,29 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             disabled={disabled}
           />
+
           <Button onClick={onSend} disabled={!canSend} size="icon" className="shrink-0">
             <Send className="size-4" />
           </Button>
         </div>
-        <p className="text-muted-foreground mt-2 text-center text-xs">
-          Tekan Enter untuk mengirim, Shift+Enter untuk baris baru
-        </p>
+
+        {/* Footer: hints and new chat button */}
+        <div className="mt-2 flex items-center justify-between">
+          <p className="text-muted-foreground text-xs">
+            Tekan Enter untuk mengirim, Shift+Enter untuk baris baru
+          </p>
+
+          {showNewChatButton && onNewChat && (
+            <button
+              onClick={onNewChat}
+              disabled={disabled}
+              className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-xs transition-colors disabled:opacity-50"
+            >
+              <MessageSquarePlus className="size-3.5" />
+              <span>Laporan Baru</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -292,6 +292,7 @@ export function useChatStream({
                 return { ...prev, blocks: newBlocks };
               });
             } else if (isMessageCompletedEvent(sseEvent)) {
+              // Build final message from current state
               setStreamingState((prev) => {
                 const finalMessage: IMessage = {
                   id: sseEvent.data.message_id,
@@ -301,18 +302,21 @@ export function useChatStream({
                   created_at: sseEvent.data.timestamp,
                 };
 
-                onMessageComplete?.(finalMessage);
+                // Defer callbacks to avoid state updates during render
+                queueMicrotask(() => {
+                  onMessageComplete?.(finalMessage);
 
-                // Notify about new thread
-                if (
-                  !threadId &&
-                  sseEvent.data.thread_id &&
-                  onThreadCreated &&
-                  !threadCreationNotifiedRef.current
-                ) {
-                  threadCreationNotifiedRef.current = true;
-                  onThreadCreated(sseEvent.data.thread_id);
-                }
+                  // Notify about new thread
+                  if (
+                    !threadId &&
+                    sseEvent.data.thread_id &&
+                    onThreadCreated &&
+                    !threadCreationNotifiedRef.current
+                  ) {
+                    threadCreationNotifiedRef.current = true;
+                    onThreadCreated(sseEvent.data.thread_id);
+                  }
+                });
 
                 return initialStreamingState;
               });
