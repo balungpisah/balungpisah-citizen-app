@@ -15,7 +15,7 @@ const ACCESS_TOKEN_COOKIE = 'citizen_access_token';
 const REDIRECT_PATH_COOKIE = 'citizen_redirect_path';
 
 // Routes that require authentication
-const PROTECTED_ROUTES = ['/dashboard', '/lapor'];
+const PROTECTED_ROUTES = ['/dashboard/reports', '/lapor'];
 
 // Routes only for unauthenticated users
 const AUTH_ROUTES = ['/sign-in', '/sign-up'];
