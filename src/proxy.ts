@@ -1,5 +1,5 @@
 /**
- * Next.js Middleware for Authentication
+ * Next.js Proxy for Authentication
  *
  * Handles:
  * 1. Protected routes - redirect to sign-in if not authenticated
@@ -17,7 +17,7 @@ const PROTECTED_ROUTES = ['/dashboard/reports', '/lapor'];
 // Routes only for unauthenticated users
 const AUTH_ROUTES = ['/sign-in', '/sign-up'];
 
-// Routes that should be excluded from middleware
+// Routes that should be excluded from proxy
 const PUBLIC_ROUTES = ['/callback', '/auth/processing', '/api'];
 
 /**
@@ -27,7 +27,7 @@ function matchesRoute(path: string, routes: string[]): boolean {
   return routes.some((route) => path === route || path.startsWith(`${route}/`));
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip public routes and API routes
