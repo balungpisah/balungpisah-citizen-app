@@ -15,9 +15,9 @@ interface LaporThreadPageProps {
 export default async function LaporThreadPage({ params }: LaporThreadPageProps) {
   const { threadId } = await params;
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-dvh flex-col">
       <ChatNavbar />
-      <div className="flex-1 overflow-hidden">
+      <div className="min-h-0 flex-1">
         <ChatView threadId={threadId} showHeader={false} />
       </div>
     </div>

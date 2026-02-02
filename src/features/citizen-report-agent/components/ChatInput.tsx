@@ -34,8 +34,8 @@ export function ChatInput({
   };
 
   return (
-    <div className="bg-background border-card sticky bottom-0 border-t">
-      <div className="mx-auto max-w-3xl px-4 py-4">
+    <div className="bg-background border-border/50 shrink-0 border-t">
+      <div className="mx-auto max-w-3xl px-4 py-3">
         <div className="bg-card flex items-end gap-2 rounded-2xl p-2">
           <textarea
             value={value}

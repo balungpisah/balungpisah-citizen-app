@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { User } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import type { IMessage } from '../types';
@@ -8,7 +9,7 @@ interface UserMessageProps {
   message: IMessage;
 }
 
-export function UserMessage({ message }: UserMessageProps) {
+function UserMessageComponent({ message }: UserMessageProps) {
   // Handle both array and string content
   const contentBlocks = Array.isArray(message.content)
     ? message.content
@@ -42,3 +43,5 @@ export function UserMessage({ message }: UserMessageProps) {
     </div>
   );
 }
+
+export const UserMessage = memo(UserMessageComponent);

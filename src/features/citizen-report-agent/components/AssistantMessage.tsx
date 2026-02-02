@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { Bot } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ContentBlock } from './ContentBlock';
@@ -10,7 +11,7 @@ interface AssistantMessageProps {
   isStreaming?: boolean;
 }
 
-export function AssistantMessage({ message, isStreaming = false }: AssistantMessageProps) {
+function AssistantMessageComponent({ message, isStreaming = false }: AssistantMessageProps) {
   // Handle both array and string content
   const contentBlocks = Array.isArray(message.content)
     ? message.content
@@ -41,3 +42,5 @@ export function AssistantMessage({ message, isStreaming = false }: AssistantMess
     </div>
   );
 }
+
+export const AssistantMessage = memo(AssistantMessageComponent);
