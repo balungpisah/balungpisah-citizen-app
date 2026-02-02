@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { ACCESS_TOKEN_COOKIE } from '@/features/auth/services/token-service';
 import { LoginPrompt } from '@/features/home/components/LoginPrompt';
 
@@ -8,32 +9,31 @@ import { LoginPrompt } from '@/features/home/components/LoginPrompt';
 // ============================================================================
 
 export const metadata: Metadata = {
-  title: 'BalungPisah - Gotong Royong Menyambung yang Terpisah',
+  title: 'Urun BalungPisah - Layanan Pengaduan Masyarakat',
   description:
-    'Platform kolaborasi rakyat dan pemerintah. Rakyat urun data, AI menjernihkan, Pejabat menuntaskan. Segera hadir untuk Indonesia.',
+    'Platform pengaduan masyarakat. Laporkan masalah di sekitarmu, pantau perkembangan, dan lihat transparansi tindak lanjut pemerintah.',
   keywords: [
     'BalungPisah',
-    'kolaborasi',
-    'gotong royong',
+    'pengaduan',
+    'laporan',
+    'masyarakat',
     'pemerintah',
-    'rakyat',
+    'transparansi',
     'Indonesia',
-    'AI',
-    'data',
   ],
   openGraph: {
-    title: 'BalungPisah - Gotong Royong Menyambung yang Terpisah',
+    title: 'Urun BalungPisah - Layanan Pengaduan Masyarakat',
     description:
-      'Platform kolaborasi rakyat dan pemerintah. Rakyat urun data, AI menjernihkan, Pejabat menuntaskan.',
+      'Platform pengaduan masyarakat. Laporkan masalah di sekitarmu, pantau perkembangan, dan lihat transparansi tindak lanjut pemerintah.',
     type: 'website',
     locale: 'id_ID',
-    siteName: 'BalungPisah',
+    siteName: 'Urun BalungPisah',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BalungPisah - Gotong Royong Menyambung yang Terpisah',
+    title: 'Urun BalungPisah - Layanan Pengaduan Masyarakat',
     description:
-      'Platform kolaborasi rakyat dan pemerintah. Rakyat urun data, AI menjernihkan, Pejabat menuntaskan.',
+      'Platform pengaduan masyarakat. Laporkan masalah di sekitarmu, pantau perkembangan, dan lihat transparansi tindak lanjut pemerintah.',
   },
   robots: {
     index: true,
@@ -51,6 +51,11 @@ export default async function Home() {
   const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE);
   const isAuthenticated = !!accessToken?.value;
 
-  // Show landing page for all users with appropriate CTAs
-  return <LoginPrompt isAuthenticated={isAuthenticated} />;
+  // Redirect authenticated users to dashboard
+  if (isAuthenticated) {
+    redirect('/dashboard');
+  }
+
+  // Show login prompt for guests
+  return <LoginPrompt />;
 }

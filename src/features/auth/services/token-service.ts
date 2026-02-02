@@ -42,8 +42,14 @@ export async function checkAuthStatus(): Promise<boolean> {
       credentials: 'include',
     });
 
-    // Check if access token exists based on response
-    const isAuthenticated = response.ok;
+    if (!response.ok) {
+      authStatusCache = { isAuthenticated: false, timestamp: now };
+      return false;
+    }
+
+    // Parse response to check authenticated field
+    const data = await response.json();
+    const isAuthenticated = data.authenticated === true;
 
     // Update cache
     authStatusCache = { isAuthenticated, timestamp: now };

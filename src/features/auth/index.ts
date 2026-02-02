@@ -31,5 +31,8 @@ export {
   type JwtPayload,
 } from './utils/jwt';
 
+// Hooks
+export { useAuth } from './hooks/use-auth';
+
 // Types
 export type { IUserProfile } from './types';

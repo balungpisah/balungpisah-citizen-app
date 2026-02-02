@@ -1,3 +1,4 @@
+import { AppShell } from '@/components/layout/AppShell';
 import { DashboardHeader } from '@/features/dashboard/components/DashboardHeader';
 import { SummaryCards } from '@/features/dashboard/components/SummaryCards';
 import { CategoryChart } from '@/features/dashboard/components/CategoryChart';
@@ -11,7 +12,7 @@ import { RecentReportsList } from '@/features/dashboard/components/RecentReports
  */
 export default function DashboardPage() {
   return (
-    <div className="bg-background min-h-screen">
+    <AppShell>
       <DashboardHeader />
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6">
         {/* Summary Cards */}
@@ -26,6 +27,6 @@ export default function DashboardPage() {
         {/* Recent Reports */}
         <RecentReportsList />
       </main>
-    </div>
+    </AppShell>
   );
 }

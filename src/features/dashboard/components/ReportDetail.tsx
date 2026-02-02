@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { ArrowLeft, Calendar, MapPin, Tag, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Calendar, MapPin, Tag, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useOne } from '@/hooks/api/use-one';
@@ -38,14 +37,7 @@ export function ReportDetail({ reportId }: ReportDetailProps) {
 
   if (isError || !data) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-6">
-        <Link
-          href="/dashboard"
-          className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-2 text-sm"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Kembali ke Dashboard
-        </Link>
+      <main className="mx-auto max-w-3xl px-4 py-6">
         <Card>
           <CardContent className="py-12">
             <div className="text-center">
@@ -60,7 +52,7 @@ export function ReportDetail({ reportId }: ReportDetailProps) {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </main>
     );
   }
 
@@ -68,16 +60,7 @@ export function ReportDetail({ reportId }: ReportDetailProps) {
   const locationDisplay = data.location?.display_name || data.location?.raw_input;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6">
-      {/* Back Button */}
-      <Link
-        href="/dashboard"
-        className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-2 text-sm"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Kembali ke Dashboard
-      </Link>
-
+    <main className="mx-auto max-w-3xl px-4 py-6">
       {/* Main Content */}
       <Card>
         <CardHeader className="space-y-4">
@@ -185,6 +168,6 @@ export function ReportDetail({ reportId }: ReportDetailProps) {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }

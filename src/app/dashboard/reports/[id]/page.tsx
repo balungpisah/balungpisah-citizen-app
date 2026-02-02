@@ -1,4 +1,6 @@
 import { ReportDetail } from '@/features/dashboard/components/ReportDetail';
+import { ReportDetailHeader } from '@/features/dashboard/components/ReportDetailHeader';
+import { AppShell } from '@/components/layout/AppShell';
 
 interface ReportDetailPageProps {
   params: Promise<{
@@ -15,8 +17,9 @@ export default async function ReportDetailPage({ params }: ReportDetailPageProps
   const { id } = await params;
 
   return (
-    <div className="bg-background min-h-screen">
+    <AppShell>
+      <ReportDetailHeader />
       <ReportDetail reportId={id} />
-    </div>
+    </AppShell>
   );
 }

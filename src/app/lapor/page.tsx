@@ -1,5 +1,5 @@
 import { ChatView } from '@/features/citizen-report-agent/components/ChatView';
-import { ChatNavbar } from '@/features/citizen-report-agent/components/ChatNavbar';
+import { LaporWrapper } from '@/features/citizen-report-agent/components/LaporWrapper';
 
 /**
  * Lapor Page - New Conversation
@@ -8,11 +8,8 @@ import { ChatNavbar } from '@/features/citizen-report-agent/components/ChatNavba
  */
 export default function LaporPage() {
   return (
-    <div className="flex h-dvh flex-col">
-      <ChatNavbar />
-      <div className="min-h-0 flex-1">
-        <ChatView showHeader={false} />
-      </div>
-    </div>
+    <LaporWrapper>
+      <ChatView showHeader={false} />
+    </LaporWrapper>
   );
 }

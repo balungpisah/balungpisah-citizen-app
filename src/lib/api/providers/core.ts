@@ -49,7 +49,7 @@ export const coreProvider: DataProvider = {
       success: raw.success,
       data: raw.data,
       meta: {
-        total: raw.meta.total,
+        total: raw.meta?.total ?? 0,
       },
       message: raw.message,
     };
