@@ -2,13 +2,89 @@
 
 import { useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { ArrowDown, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAutoScroll } from '../hooks/use-auto-scroll';
 import { useChatStream } from '../hooks/use-chat-stream';
 import { useChatStore } from '../stores/chat-store';
 import type { IMessage, IContentBlock } from '../types';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
+
+// ==================== History Transformation ====================
+
+/**
+ * Raw content block from history API
+ */
+interface RawHistoryContentBlock {
+  type: string;
+  // text block
+  text?: string;
+  // tool_use block (API format)
+  id?: string;
+  name?: string;
+  input?: unknown;
+  // tool_result block
+  content?: string;
+  is_error?: boolean;
+  tool_use_id?: string;
+}
+
+/**
+ * Transform history content blocks to match streaming format.
+ *
+ * History API returns:
+ * - tool_use blocks with `input` (object) and `type: "tool_use"`
+ * - tool_result blocks as separate entries
+ *
+ * Streaming format expects:
+ * - tool_call blocks with `arguments` (string) and `type: "tool_call"`
+ * - tool_result merged into tool_call block
+ */
+function transformHistoryContent(rawContent: RawHistoryContentBlock[]): IContentBlock[] {
+  // Build map of tool_use_id -> tool_result
+  const toolResultsMap = new Map<string, { content?: string; is_error?: boolean; name?: string }>();
+
+  for (const block of rawContent) {
+    if (block.type === 'tool_result' && block.tool_use_id) {
+      toolResultsMap.set(block.tool_use_id, {
+        content: block.content,
+        is_error: block.is_error,
+        name: block.name,
+      });
+    }
+  }
+
+  // Transform blocks (filter out tool_result as they get merged)
+  return rawContent
+    .filter((block) => block.type !== 'tool_result')
+    .map((block): IContentBlock => {
+      if (block.type === 'text') {
+        return {
+          type: 'text',
+          text: block.text,
+        };
+      }
+
+      if (block.type === 'tool_use' && block.id) {
+        const toolResult = toolResultsMap.get(block.id);
+        return {
+          type: 'tool_call',
+          id: block.id,
+          name: block.name,
+          arguments: block.input ? JSON.stringify(block.input, null, 2) : undefined,
+          // Merge tool_result data
+          result: toolResult?.content,
+          error: toolResult?.is_error ? toolResult.content : undefined,
+          success: toolResult ? !toolResult.is_error : undefined,
+        };
+      }
+
+      // Pass through other types as-is
+      return block as IContentBlock;
+    });
+}
 
 interface ChatViewProps {
   /** Thread ID if loading existing conversation, undefined for new */
@@ -52,6 +128,14 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
     },
   });
 
+  // Auto-scroll hook
+  const { scrollContainerRef, bottomRef, isAtBottom, scrollToBottom, handleScroll } = useAutoScroll(
+    {
+      threshold: 150,
+      isStreaming,
+    }
+  );
+
   // Initialize thread from props - only run once
   useEffect(() => {
     if (initializedRef.current) return;
@@ -93,18 +177,30 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
               id: string;
               thread_id: string;
               role: string;
-              content: string | IContentBlock[];
+              content: string | RawHistoryContentBlock[];
               created_at: string;
-            }) => ({
-              id: msg.id,
-              thread_id: msg.thread_id,
-              role: msg.role as 'user' | 'assistant',
-              content:
-                typeof msg.content === 'string'
-                  ? [{ type: 'text' as const, text: msg.content }]
-                  : msg.content,
-              created_at: msg.created_at,
-            })
+            }) => {
+              // Transform content to match streaming format
+              let content: IContentBlock[];
+
+              if (typeof msg.content === 'string') {
+                content = [{ type: 'text', text: msg.content }];
+              } else if (msg.role === 'assistant') {
+                // Transform assistant content (may contain tool_use/tool_result)
+                content = transformHistoryContent(msg.content);
+              } else {
+                // User messages - pass through as-is
+                content = msg.content as IContentBlock[];
+              }
+
+              return {
+                id: msg.id,
+                thread_id: msg.thread_id,
+                role: msg.role as 'user' | 'assistant',
+                content,
+                created_at: msg.created_at,
+              };
+            }
           );
 
           rawMessages.sort(
@@ -186,16 +282,35 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
     );
   }
 
+  const showScrollButton = !isAtBottom && messages.length > 0;
+
   return (
     <main className="bg-background flex h-full flex-col overflow-hidden">
       {showHeader && <ChatHeader title="Lapor Masalah" />}
 
       <MessageList
+        ref={scrollContainerRef}
         messages={messages}
         streamingMessage={streamingMessage}
         isPending={isPending}
         error={error}
+        onScroll={handleScroll}
+        bottomRef={bottomRef}
       />
+
+      {/* Floating scroll to bottom button - positioned above input */}
+      {showScrollButton && (
+        <div className="flex justify-center pb-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => scrollToBottom('smooth')}
+            className="bg-muted/60 hover:bg-muted/80 size-8 rounded-full backdrop-blur-sm"
+          >
+            <ArrowDown className="text-muted-foreground size-4" />
+          </Button>
+        </div>
+      )}
 
       <ChatInput
         value={inputValue}

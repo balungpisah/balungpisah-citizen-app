@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import { Bot, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import type { IMessage } from '../types';
@@ -14,26 +14,38 @@ interface MessageListProps {
   isPending?: boolean;
   error?: string | null;
   showWelcome?: boolean;
+  onScroll?: () => void;
+  bottomRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-export function MessageList({
-  messages,
-  streamingMessage,
-  isPending,
-  error,
-  showWelcome = true,
-}: MessageListProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+export const MessageList = forwardRef<HTMLDivElement, MessageListProps>(function MessageList(
+  { messages, streamingMessage, isPending, error, showWelcome = true, onScroll, bottomRef },
+  ref
+) {
+  const internalBottomRef = useRef<HTMLDivElement>(null);
+  const actualBottomRef = bottomRef || internalBottomRef;
 
-  // Auto-scroll to bottom when messages change
+  const prevMessageCountRef = useRef(0);
+  const prevIsPendingRef = useRef(false);
+
+  // Scroll to bottom when new message or pending starts
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, streamingMessage]);
+    const messageCount = messages.length;
+    const isNewMessage = messageCount > prevMessageCountRef.current;
+    const isPendingStarted = isPending && !prevIsPendingRef.current;
+
+    prevMessageCountRef.current = messageCount;
+    prevIsPendingRef.current = !!isPending;
+
+    if (isNewMessage || isPendingStarted) {
+      actualBottomRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
+    }
+  }, [messages.length, isPending, actualBottomRef]);
 
   const shouldShowWelcome = showWelcome && messages.length === 0 && !streamingMessage;
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div ref={ref} onScroll={onScroll} className="flex-1 overflow-y-auto overscroll-contain">
       <div className="mx-auto max-w-3xl space-y-4 px-4 py-6">
         {/* Welcome message if no messages yet */}
         {shouldShowWelcome && <ChatWelcome />}
@@ -77,8 +89,9 @@ export function MessageList({
           </div>
         )}
 
-        <div ref={messagesEndRef} />
+        {/* Bottom anchor for scrolling */}
+        <div ref={actualBottomRef} />
       </div>
     </div>
   );
-}
+});
