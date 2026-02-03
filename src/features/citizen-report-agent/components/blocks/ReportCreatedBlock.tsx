@@ -3,19 +3,19 @@
 import { CheckCircle2, Loader2, Ticket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type TicketCreatedStatus = 'processing' | 'success' | 'error';
+export type ReportCreatedStatus = 'processing' | 'success' | 'error';
 
-export interface TicketCreatedBlockProps {
-  status: TicketCreatedStatus;
+export interface ReportCreatedBlockProps {
+  status: ReportCreatedStatus;
   referenceNumber?: string;
   error?: string;
 }
 
 /**
- * Custom card for create_ticket tool.
+ * Custom card for create_report tool.
  * Shows a user-friendly message when a report ticket is created.
  */
-export function TicketCreatedBlock({ status, referenceNumber, error }: TicketCreatedBlockProps) {
+export function ReportCreatedBlock({ status, referenceNumber, error }: ReportCreatedBlockProps) {
   if (status === 'processing') {
     return (
       <div className="my-3 overflow-hidden rounded-xl border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950">

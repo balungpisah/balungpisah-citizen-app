@@ -18,15 +18,15 @@ import { RateLimitNotice } from './RateLimitNotice';
 import { useAttachments } from '../hooks/use-attachments';
 
 /**
- * Check if conversation has a completed create_ticket tool call.
+ * Check if conversation has a completed create_report tool call.
  * This indicates the conversation lifecycle is complete.
  */
-function hasCompletedTicket(messages: IMessage[]): boolean {
+function hasCompletedReport(messages: IMessage[]): boolean {
   for (const message of messages) {
     if (message.role !== 'assistant') continue;
 
     for (const block of message.content) {
-      if (block.type === 'tool_call' && block.name === 'create_ticket') {
+      if (block.type === 'tool_call' && block.name === 'create_report') {
         // Check if the tool call has a result (meaning it completed)
         const hasResult = block.result !== undefined || block.content !== undefined;
         const hasError = !!block.error;
@@ -314,7 +314,7 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
   };
 
   // Check if conversation is complete (ticket has been created)
-  const isConversationComplete = hasCompletedTicket(messages);
+  const isConversationComplete = hasCompletedReport(messages);
 
   // Loading state for rate limit check (new chats only)
   if (isNewChat && isLoadingRateLimit) {

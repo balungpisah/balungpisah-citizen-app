@@ -2,7 +2,7 @@
 
 import { TextBlock } from './blocks/TextBlock';
 import { ToolCallBlock, type ToolCallStatus } from './blocks/ToolCallBlock';
-import { TicketCreatedBlock, type TicketCreatedStatus } from './blocks/TicketCreatedBlock';
+import { ReportCreatedBlock, type ReportCreatedStatus } from './blocks/ReportCreatedBlock';
 import type { IContentBlock } from '../types';
 
 interface ContentBlockProps {
@@ -11,9 +11,9 @@ interface ContentBlockProps {
 }
 
 /**
- * Parse the result JSON from create_ticket tool to extract reference number
+ * Parse the result JSON from create_report tool to extract reference number
  */
-function parseTicketResult(result?: string): { referenceNumber?: string; error?: string } {
+function parseReportResult(result?: string): { referenceNumber?: string; error?: string } {
   if (!result) return {};
 
   try {
@@ -37,23 +37,23 @@ export function ContentBlock({ block, isStreaming = false }: ContentBlockProps) 
       return null;
 
     case 'tool_call': {
-      // Special handling for create_ticket tool
-      if (block.name === 'create_ticket') {
+      // Special handling for create_report tool
+      if (block.name === 'create_report') {
         const hasResult = block.result !== undefined || block.content !== undefined;
         const hasError = !!block.error;
 
-        let ticketStatus: TicketCreatedStatus = 'processing';
+        let reportStatus: ReportCreatedStatus = 'processing';
         if (hasError) {
-          ticketStatus = 'error';
+          reportStatus = 'error';
         } else if (hasResult) {
-          ticketStatus = 'success';
+          reportStatus = 'success';
         }
 
-        const { referenceNumber, error } = parseTicketResult(block.result || block.content);
+        const { referenceNumber, error } = parseReportResult(block.result || block.content);
 
         return (
-          <TicketCreatedBlock
-            status={ticketStatus}
+          <ReportCreatedBlock
+            status={reportStatus}
             referenceNumber={referenceNumber}
             error={error || block.error}
           />
