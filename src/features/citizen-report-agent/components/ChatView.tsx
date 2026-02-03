@@ -12,9 +12,33 @@ import type { IMessage, IContentBlock, IRateLimitStatus } from '../types';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
+import { ConversationCompleteFooter } from './ConversationCompleteFooter';
 import { AttachmentDrawer } from './AttachmentDrawer';
 import { RateLimitNotice } from './RateLimitNotice';
 import { useAttachments } from '../hooks/use-attachments';
+
+/**
+ * Check if conversation has a completed create_ticket tool call.
+ * This indicates the conversation lifecycle is complete.
+ */
+function hasCompletedTicket(messages: IMessage[]): boolean {
+  for (const message of messages) {
+    if (message.role !== 'assistant') continue;
+
+    for (const block of message.content) {
+      if (block.type === 'tool_call' && block.name === 'create_ticket') {
+        // Check if the tool call has a result (meaning it completed)
+        const hasResult = block.result !== undefined || block.content !== undefined;
+        const hasError = !!block.error;
+        // Consider complete if it has a successful result
+        if (hasResult && !hasError) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
 
 // ==================== History Transformation ====================
 
@@ -285,6 +309,13 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
     router.push('/lapor');
   };
 
+  const handleViewDashboard = () => {
+    router.push('/dashboard');
+  };
+
+  // Check if conversation is complete (ticket has been created)
+  const isConversationComplete = hasCompletedTicket(messages);
+
   // Loading state for rate limit check (new chats only)
   if (isNewChat && isLoadingRateLimit) {
     return (
@@ -372,18 +403,25 @@ export function ChatView({ threadId: initialThreadId, showHeader = true }: ChatV
         </div>
       )}
 
-      <ChatInput
-        value={inputValue}
-        onChange={setInputValue}
-        onSend={handleSendMessage}
-        onNewChat={handleNewChat}
-        disabled={isStreaming || isPending}
-        showNewChatButton={messages.length > 0 || !!threadId}
-        attachmentCount={attachmentCount}
-        canAddMoreAttachments={canAddMoreAttachments}
-        onFilesSelected={addFiles}
-        onOpenAttachments={() => setDrawerOpen(true)}
-      />
+      {isConversationComplete ? (
+        <ConversationCompleteFooter
+          onNewReport={handleNewChat}
+          onViewDashboard={handleViewDashboard}
+        />
+      ) : (
+        <ChatInput
+          value={inputValue}
+          onChange={setInputValue}
+          onSend={handleSendMessage}
+          onNewChat={handleNewChat}
+          disabled={isStreaming || isPending}
+          showNewChatButton={messages.length > 0 || !!threadId}
+          attachmentCount={attachmentCount}
+          canAddMoreAttachments={canAddMoreAttachments}
+          onFilesSelected={addFiles}
+          onOpenAttachments={() => setDrawerOpen(true)}
+        />
+      )}
 
       {/* Attachment drawer */}
       <AttachmentDrawer

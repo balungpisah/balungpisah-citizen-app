@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { MessageSquarePlus } from 'lucide-react';
+import { MessageSquarePlus, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserMenu } from '@/components/layout/UserMenu';
+import { getTopNavItems, ROUTES } from '@/components/layout/nav-config';
 import { useAuth } from '@/features/auth';
 import { cn } from '@/lib/utils';
 import { useChatStore } from '../stores/chat-store';
@@ -32,11 +33,8 @@ export function ChatNavbar() {
     router.push('/lapor');
   };
 
-  // Nav items for chat pages
-  const navItems = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Laporan Saya', href: '/laporan-saya' },
-  ];
+  // Get nav items based on auth state (excluding CTA)
+  const navItems = getTopNavItems(isAuthenticated).filter((item) => !item.isCTA);
 
   return (
     <header className="bg-background/70 sticky top-0 z-50 shrink-0 backdrop-blur-xl">
@@ -48,12 +46,15 @@ export function ChatNavbar() {
           </span>
         </Link>
 
-        {/* Navigation - Right */}
-        <div className="flex items-center gap-6">
-          {/* Nav Links (desktop) */}
-          <nav className="hidden items-center gap-1 md:flex">
+        {/* All navigation - Right */}
+        <div className="hidden items-center gap-6 md:flex">
+          {/* Nav Links - Simple text links for clear hierarchy */}
+          <nav className="flex items-center gap-1">
             {navItems.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const isActive =
+                item.href === '/'
+                  ? pathname === '/'
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.href}
@@ -64,6 +65,7 @@ export function ChatNavbar() {
                   )}
                 >
                   {item.label}
+                  {/* Active indicator - subtle underline */}
                   {isActive && (
                     <span className="bg-primary absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full" />
                   )}
@@ -72,23 +74,35 @@ export function ChatNavbar() {
             })}
           </nav>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3">
-            {/* New Chat button - shown when in conversation */}
-            {showNewChatButton && (
-              <Button onClick={handleNewChat} variant="outline" size="sm" className="gap-1.5">
-                <MessageSquarePlus className="size-4" />
-                <span className="hidden sm:inline">Laporan Baru</span>
-              </Button>
-            )}
-
-            {/* User Menu */}
-            {isLoading ? (
-              <div className="bg-muted h-8 w-8 animate-pulse rounded-full" />
-            ) : isAuthenticated ? (
+          {/* Auth section - Only show when not loading */}
+          {isLoading ? (
+            <div className="bg-muted h-8 w-20 animate-pulse rounded-md" />
+          ) : isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              {/* Laporan Baru button - shown when in conversation */}
+              {showNewChatButton && (
+                <Button onClick={handleNewChat} variant="outline" size="sm" className="gap-1.5">
+                  <MessageSquarePlus className="size-4" />
+                  Laporan Baru
+                </Button>
+              )}
+              {/* User Menu */}
               <UserMenu onSignOut={signOut} />
-            ) : null}
-          </div>
+            </div>
+          ) : (
+            /* Guest: Show Masuk/Daftar */
+            <div className="flex items-center gap-2">
+              <Button asChild variant="ghost" size="sm">
+                <Link href={ROUTES.signIn}>Masuk</Link>
+              </Button>
+              <Button asChild size="sm" className="gap-1.5">
+                <Link href={ROUTES.signUp}>
+                  <UserPlus className="size-4" />
+                  Daftar
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>

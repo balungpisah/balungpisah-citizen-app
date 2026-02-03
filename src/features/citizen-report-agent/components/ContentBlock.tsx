@@ -2,11 +2,29 @@
 
 import { TextBlock } from './blocks/TextBlock';
 import { ToolCallBlock, type ToolCallStatus } from './blocks/ToolCallBlock';
+import { TicketCreatedBlock, type TicketCreatedStatus } from './blocks/TicketCreatedBlock';
 import type { IContentBlock } from '../types';
 
 interface ContentBlockProps {
   block: IContentBlock;
   isStreaming?: boolean;
+}
+
+/**
+ * Parse the result JSON from create_ticket tool to extract reference number
+ */
+function parseTicketResult(result?: string): { referenceNumber?: string; error?: string } {
+  if (!result) return {};
+
+  try {
+    const parsed = JSON.parse(result);
+    return {
+      referenceNumber: parsed.reference_number,
+      error: parsed.message && !parsed.success ? parsed.message : undefined,
+    };
+  } catch {
+    return {};
+  }
 }
 
 export function ContentBlock({ block, isStreaming = false }: ContentBlockProps) {
@@ -19,7 +37,30 @@ export function ContentBlock({ block, isStreaming = false }: ContentBlockProps) 
       return null;
 
     case 'tool_call': {
-      // Determine status based on result presence
+      // Special handling for create_ticket tool
+      if (block.name === 'create_ticket') {
+        const hasResult = block.result !== undefined || block.content !== undefined;
+        const hasError = !!block.error;
+
+        let ticketStatus: TicketCreatedStatus = 'processing';
+        if (hasError) {
+          ticketStatus = 'error';
+        } else if (hasResult) {
+          ticketStatus = 'success';
+        }
+
+        const { referenceNumber, error } = parseTicketResult(block.result || block.content);
+
+        return (
+          <TicketCreatedBlock
+            status={ticketStatus}
+            referenceNumber={referenceNumber}
+            error={error || block.error}
+          />
+        );
+      }
+
+      // Default handling for other tools
       const hasResult = block.result !== undefined || block.content !== undefined;
       const hasError = !!block.error;
 
