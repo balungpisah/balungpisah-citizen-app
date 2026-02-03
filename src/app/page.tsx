@@ -9,7 +9,7 @@ import { LoginPrompt } from '@/features/home/components/LoginPrompt';
 // ============================================================================
 
 export const metadata: Metadata = {
-  title: 'Urun BalungPisah - Layanan Pengaduan Masyarakat',
+  title: 'Lapor Bersama - Layanan Pengaduan Masyarakat | BalungPisah',
   description:
     'Platform pengaduan masyarakat. Laporkan masalah di sekitarmu, pantau perkembangan, dan lihat transparansi tindak lanjut pemerintah.',
   keywords: [
@@ -19,19 +19,20 @@ export const metadata: Metadata = {
     'masyarakat',
     'pemerintah',
     'transparansi',
+    'aspirasi',
     'Indonesia',
   ],
   openGraph: {
-    title: 'Urun BalungPisah - Layanan Pengaduan Masyarakat',
+    title: 'Lapor Bersama - Layanan Pengaduan Masyarakat | BalungPisah',
     description:
       'Platform pengaduan masyarakat. Laporkan masalah di sekitarmu, pantau perkembangan, dan lihat transparansi tindak lanjut pemerintah.',
     type: 'website',
     locale: 'id_ID',
-    siteName: 'Urun BalungPisah',
+    siteName: 'Lapor Bersama BalungPisah',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Urun BalungPisah - Layanan Pengaduan Masyarakat',
+    title: 'Lapor Bersama - Layanan Pengaduan Masyarakat | BalungPisah',
     description:
       'Platform pengaduan masyarakat. Laporkan masalah di sekitarmu, pantau perkembangan, dan lihat transparansi tindak lanjut pemerintah.',
   },

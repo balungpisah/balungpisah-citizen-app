@@ -6,7 +6,7 @@ import { MyReportsHeader } from '@/features/my-reports/components/MyReportsHeade
 import { MyReportsList } from '@/features/my-reports/components/MyReportsList';
 
 export const metadata = {
-  title: 'Laporan Saya - Urun BalungPisah',
+  title: 'Laporan Saya - Lapor Bersama | BalungPisah',
   description: 'Lihat dan pantau status laporan yang telah Anda buat',
 };
 
