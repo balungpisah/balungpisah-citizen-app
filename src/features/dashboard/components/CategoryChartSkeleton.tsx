@@ -8,12 +8,12 @@ export function CategoryChartSkeleton() {
         <Skeleton className="h-5 w-40" />
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="space-y-1">
+            <div key={i} className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Skeleton className="h-3 w-24" />
-                <Skeleton className="h-3 w-8" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-16" />
               </div>
               <Skeleton className="h-6 w-full rounded" />
             </div>

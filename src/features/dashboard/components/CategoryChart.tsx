@@ -1,31 +1,9 @@
 'use client';
 
-import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from '@/components/ui/chart';
 import { useOne } from '@/hooks/api/use-one';
 import type { IDashboardCategoryOverviewDto } from '@/features/dashboard/types';
 import { CategoryChartSkeleton } from './CategoryChartSkeleton';
-
-const chartConfig = {
-  total: {
-    label: 'Total',
-    color: 'var(--chart-1)',
-  },
-  pending: {
-    label: 'Menunggu',
-    color: 'var(--chart-2)',
-  },
-  resolved: {
-    label: 'Selesai',
-    color: 'var(--chart-4)',
-  },
-} satisfies ChartConfig;
 
 export function CategoryChart() {
   const { data, isLoading, isError, refetch } = useOne<IDashboardCategoryOverviewDto>({
@@ -72,10 +50,7 @@ export function CategoryChart() {
     );
   }
 
-  const chartData = categories.map((cat) => ({
-    name: cat?.name ?? '-',
-    total: cat?.report_count ?? 0,
-  }));
+  const maxCount = Math.max(...categories.map((c) => c?.report_count ?? 0), 1);
 
   return (
     <Card>
@@ -86,28 +61,27 @@ export function CategoryChart() {
         </p>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <BarChart
-            data={chartData}
-            layout="vertical"
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <XAxis type="number" fontSize={12} tickLine={false} axisLine={false} />
-            <YAxis
-              type="category"
-              dataKey="name"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-              width={100}
-              tickFormatter={(value) =>
-                typeof value === 'string' && value.length > 12 ? `${value.slice(0, 12)}...` : value
-              }
-            />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="total" fill="var(--color-total)" radius={[0, 4, 4, 0]} barSize={20} />
-          </BarChart>
-        </ChartContainer>
+        <div className="space-y-3">
+          {categories.map((cat) => {
+            const count = cat?.report_count ?? 0;
+            const percentage = (count / maxCount) * 100;
+
+            return (
+              <div key={cat?.id ?? cat?.name} className="space-y-1.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium">{cat?.name ?? '-'}</span>
+                  <span className="text-muted-foreground">{count} laporan</span>
+                </div>
+                <div className="bg-muted h-6 w-full overflow-hidden rounded">
+                  <div
+                    className="bg-primary h-full rounded transition-all duration-500"
+                    style={{ width: `${percentage}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </CardContent>
     </Card>
   );
