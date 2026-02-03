@@ -11,9 +11,14 @@ interface ContentBlockProps {
 }
 
 /**
- * Parse the result JSON from create_report tool to extract reference number
+ * Parse the result JSON from create_report tool to extract reference number and action
  */
-function parseReportResult(result?: string): { referenceNumber?: string; error?: string } {
+function parseReportResult(result?: string): {
+  referenceNumber?: string;
+  error?: string;
+  action?: string;
+  message?: string;
+} {
   if (!result) return {};
 
   try {
@@ -21,6 +26,8 @@ function parseReportResult(result?: string): { referenceNumber?: string; error?:
     return {
       referenceNumber: parsed.reference_number,
       error: parsed.message && !parsed.success ? parsed.message : undefined,
+      action: parsed.action,
+      message: parsed.message,
     };
   } catch {
     return {};
@@ -42,20 +49,25 @@ export function ContentBlock({ block, isStreaming = false }: ContentBlockProps) 
         const hasResult = block.result !== undefined || block.content !== undefined;
         const hasError = !!block.error;
 
+        const { referenceNumber, error, action, message } = parseReportResult(
+          block.result || block.content
+        );
+
         let reportStatus: ReportCreatedStatus = 'processing';
         if (hasError) {
           reportStatus = 'error';
+        } else if (action === 'closed') {
+          reportStatus = 'closed';
         } else if (hasResult) {
           reportStatus = 'success';
         }
-
-        const { referenceNumber, error } = parseReportResult(block.result || block.content);
 
         return (
           <ReportCreatedBlock
             status={reportStatus}
             referenceNumber={referenceNumber}
             error={error || block.error}
+            message={message}
           />
         );
       }
