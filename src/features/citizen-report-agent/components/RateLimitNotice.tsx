@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Clock, AlertCircle } from 'lucide-react';
 import type { IRateLimitStatus } from '../types';
 
@@ -73,9 +74,9 @@ export function RateLimitNotice({ status }: RateLimitNoticeProps) {
         {/* Additional info */}
         <p className="text-muted-foreground mt-6 text-sm">
           Anda masih dapat melihat dan melanjutkan laporan yang sudah ada melalui halaman{' '}
-          <a href="/laporan-saya" className="text-primary hover:underline">
+          <Link href="/my-reports" className="text-primary hover:underline">
             Laporan Saya
-          </a>
+          </Link>
           .
         </p>
       </div>

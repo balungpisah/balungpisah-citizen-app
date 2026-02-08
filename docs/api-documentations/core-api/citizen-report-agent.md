@@ -171,10 +171,13 @@ interface IUploadAttachmentDto {
 
 interface IUserRateLimitStatusDto {
   can_chat: boolean;  // Whether the user can still chat (hasn't reached the limit)
-  max_tickets: number;  // Maximum tickets allowed per day (int64)
+  max_reports: number;  // Maximum reports allowed per day (int64)
+  max_tickets: number;  // Alias for max_reports (backward compatibility) (int64)
+  reports_remaining: number;  // Number of reports remaining before hitting the limit (int64)
+  reports_used: number;  // Number of reports the user has created today (int64)
   resets_at: string;  // When the limit resets (next 00:00 WIB in UTC) (date-time)
-  tickets_remaining: number;  // Number of tickets remaining before hitting the limit (int64)
-  tickets_used: number;  // Number of tickets the user has created today (int64)
+  tickets_remaining: number;  // Alias for reports_remaining (backward compatibility) (int64)
+  tickets_used: number;  // Alias for reports_used (backward compatibility) (int64)
 }
 
 interface Icount_attachmentsParams {

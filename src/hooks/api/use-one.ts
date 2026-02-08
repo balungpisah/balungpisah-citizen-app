@@ -3,13 +3,15 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
 import { getProvider, DEFAULT_PROVIDER } from '@/lib/api/providers';
-import type { ApiResponse, ApiClientError } from '@/lib/api/types';
+import type { ApiResponse, ApiClientError, FilterParams } from '@/lib/api/types';
 
 export interface UseOneOptions<T> {
   /** Resource path (e.g., 'users/123', 'test/uuid/thread', 'settings') */
   resource: string;
   /** Data provider to use (defaults to 'core') */
   dataProvider?: string;
+  /** Query parameters / filters */
+  filters?: FilterParams;
   /** Enable/disable the query */
   enabled?: boolean;
   /** Additional query options */
@@ -61,18 +63,35 @@ export interface UseOneResult<T> {
  * ```
  */
 export function useOne<T>(options: UseOneOptions<T>): UseOneResult<T> {
-  const { resource, dataProvider = DEFAULT_PROVIDER, enabled = true, queryOptions } = options;
+  const {
+    resource,
+    dataProvider = DEFAULT_PROVIDER,
+    filters,
+    enabled = true,
+    queryOptions,
+  } = options;
 
   const provider = getProvider(dataProvider);
 
+  // Build query params from filters
+  const queryParams = filters
+    ? Object.fromEntries(
+        Object.entries(filters).filter(([, v]) => v !== undefined && v !== null && v !== '')
+      )
+    : undefined;
+
   const query = useQuery<ApiResponse<T>, ApiClientError, T>({
-    // Include provider in query key for cache isolation
-    queryKey: [dataProvider, resource, 'one'],
+    // Include provider and filters in query key for cache isolation
+    queryKey: [dataProvider, resource, 'one', filters || {}],
     queryFn: async () => {
-      const rawResponse = await apiClient.raw<unknown>(resource, {
-        method: 'GET',
-        provider: dataProvider,
-      });
+      const rawResponse = await apiClient.raw<unknown>(
+        resource,
+        {
+          method: 'GET',
+          provider: dataProvider,
+        },
+        queryParams
+      );
       // Transform response using provider-specific logic
       return provider.transformOneResponse<T>(rawResponse);
     },

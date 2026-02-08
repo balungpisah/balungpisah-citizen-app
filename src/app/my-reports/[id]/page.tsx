@@ -12,7 +12,7 @@ import { ReportStatusBadge } from '@/features/dashboard/components/ReportStatusB
 import type { IDashboardReportDetailDto } from '@/features/dashboard/types';
 import { TAG_LABELS } from '@/features/dashboard/types';
 
-interface ReportDetailPageProps {
+interface MyReportDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
@@ -60,13 +60,6 @@ function DetailSkeleton() {
               <Skeleton className="h-4 w-3/4" />
             </div>
           </div>
-          <div>
-            <Skeleton className="mb-2 h-4 w-14" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
-            </div>
-          </div>
           <div className="border-t pt-4">
             <div className="grid gap-2 sm:grid-cols-2">
               <Skeleton className="h-3 w-40" />
@@ -79,11 +72,11 @@ function DetailSkeleton() {
   );
 }
 
-export default function ReportDetailPage({ params }: ReportDetailPageProps) {
+export default function MyReportDetailPage({ params }: MyReportDetailPageProps) {
   const { id } = use(params);
 
   const { data, isLoading, isError, refetch } = useOne<IDashboardReportDetailDto>({
-    resource: `dashboard/reports/${id}`,
+    resource: `reports/${id}`,
   });
 
   const tagLabel = data?.tag_type ? TAG_LABELS[data.tag_type] : null;
@@ -93,8 +86,7 @@ export default function ReportDetailPage({ params }: ReportDetailPageProps) {
     <AppShell>
       <PageHeader
         breadcrumbs={[
-          { label: 'Dashboard', href: '/dashboard' },
-          { label: 'Laporan Warga', href: '/dashboard/reports' },
+          { label: 'Laporan Saya', href: '/my-reports' },
           { label: data?.title || 'Memuat...' },
         ]}
       />
