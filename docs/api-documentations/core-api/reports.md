@@ -4,27 +4,17 @@
 
 ## API Endpoints
 
-| Method | Endpoint                     | Description                             | Parameters                    | Request Body             | Response                                    |
-| ------ | ---------------------------- | --------------------------------------- | ----------------------------- | ------------------------ | ------------------------------------------- |
-| GET    | `/api/reports`               | List reports for the authenticated user | -                             | -                        | `IApiResponse_Vec_ReportResponseDto`        |
-| GET    | `/api/reports/clusters`      | List active clusters (public)           | -                             | -                        | `IApiResponse_Vec_ReportClusterResponseDto` |
-| GET    | `/api/reports/clusters/{id}` | Get cluster by ID with reports (public) | `Iget_clusterParams`          | -                        | `IApiResponse_ClusterDetailResponseDto`     |
-| GET    | `/api/reports/{id}`          | Get report by ID with location          | `Iget_reportParams`           | -                        | `IApiResponse_ReportDetailResponseDto`      |
-| PATCH  | `/api/reports/{id}/status`   | Update report status (admin only)       | `Iupdate_report_statusParams` | `IUpdateReportStatusDto` | `IApiResponse_ReportResponseDto`            |
+| Method | Endpoint                   | Description                             | Parameters                    | Request Body             | Response                               |
+| ------ | -------------------------- | --------------------------------------- | ----------------------------- | ------------------------ | -------------------------------------- |
+| GET    | `/api/reports`             | List reports for the authenticated user | -                             | -                        | `IApiResponse_Vec_ReportResponseDto`   |
+| GET    | `/api/reports/{id}`        | Get report by ID with location          | `Iget_reportParams`           | -                        | `IApiResponse_ReportDetailResponseDto` |
+| PATCH  | `/api/reports/{id}/status` | Update report status (admin only)       | `Iupdate_report_statusParams` | `IUpdateReportStatusDto` | `IApiResponse_ReportResponseDto`       |
 
 ---
 
 ## TypeScript Interfaces
 
 ```typescript
-interface IApiResponse_ClusterDetailResponseDto {
-  data?: IReportClusterResponseDto & { reports: IReportResponseDto[] }; // Response DTO for cluster with reports
-  errors?: string[] | null;
-  message?: string | null;
-  meta?: any | IMeta;
-  success: boolean;
-}
-
 interface IApiResponse_ReportDetailResponseDto {
   data?: IReportResponseDto & { location?: any | IReportLocationResponseDto }; // Response DTO for report with location
   errors?: string[] | null;
@@ -41,14 +31,6 @@ interface IApiResponse_ReportResponseDto {
   success: boolean;
 }
 
-interface IApiResponse_Vec_ReportClusterResponseDto {
-  data?: IReportClusterResponseDto[];
-  errors?: string[] | null;
-  message?: string | null;
-  meta?: any | IMeta;
-  success: boolean;
-}
-
 interface IApiResponse_Vec_ReportResponseDto {
   data?: IReportResponseDto[];
   errors?: string[] | null;
@@ -56,8 +38,6 @@ interface IApiResponse_Vec_ReportResponseDto {
   meta?: any | IMeta;
   success: boolean;
 }
-
-interface IClusterStatus {}
 
 interface IGeocodingSource {}
 
@@ -70,18 +50,6 @@ interface IReportCategoryDto {
   category_name?: string | null;
   category_slug?: string | null;
   severity: IReportSeverity;
-}
-
-interface IReportClusterResponseDto {
-  center_lat: number; // (double)
-  center_lon: number; // (double)
-  created_at: string; // (date-time)
-  description?: string | null;
-  id: string; // (uuid)
-  name: string;
-  radius_meters: number; // (int32)
-  report_count: number; // (int32)
-  status: IClusterStatus;
 }
 
 interface IReportLocationResponseDto {
@@ -106,17 +74,17 @@ interface IReportLocationResponseDto {
 
 interface IReportResponseDto {
   categories?: IReportCategoryDto[]; // Categories assigned to this report with their severities
-  cluster_id?: string | null; // (uuid)
   created_at: string; // (date-time)
-  description: string;
+  description?: string | null;
   id: string; // (uuid)
   impact?: string | null;
+  location_display_name?: string | null; // Location display name (for list view)
+  reference_number?: string | null; // Human-readable reference number for tracking
   resolved_at?: string | null; // (date-time)
   status: IReportStatus;
   tags?: IReportTagDto[]; // Tags assigned to this report
-  ticket_id: string; // (uuid)
   timeline?: string | null;
-  title: string;
+  title?: string | null;
   updated_at: string; // (date-time)
   verified_at?: string | null; // (date-time)
 }
@@ -134,10 +102,6 @@ interface IReportTagType {}
 interface IUpdateReportStatusDto {
   resolution_notes?: string | null;
   status: IReportStatus;
-}
-
-interface Iget_clusterParams {
-  id: string; // Cluster ID (in: path) (uuid)
 }
 
 interface Iget_reportParams {

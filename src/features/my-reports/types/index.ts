@@ -16,6 +16,7 @@ export interface IReportCategoryDto {
   category_name?: string | null;
   category_slug?: string | null;
   severity: 'low' | 'medium' | 'high' | 'critical';
+  color?: string | null;
 }
 
 /**
@@ -31,14 +32,16 @@ export interface IReportTagDto {
 export interface IMyReportDto {
   id: string;
   ticket_id: string;
-  title: string;
-  description: string;
-  status: 'draft' | 'pending' | 'verified' | 'in_progress' | 'resolved' | 'rejected';
+  title?: string | null;
+  description?: string | null;
+  status: 'draft' | 'pending' | 'verified' | 'in_progress' | 'resolved' | 'rejected' | 'closed';
   categories?: IReportCategoryDto[];
   tags?: IReportTagDto[];
   cluster_id?: string | null;
   impact?: string | null;
   timeline?: string | null;
+  location_display_name?: string | null;
+  reference_number?: string | null;
   created_at: string;
   updated_at: string;
   verified_at?: string | null;

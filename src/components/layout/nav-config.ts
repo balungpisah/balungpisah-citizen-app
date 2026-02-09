@@ -60,7 +60,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     label: 'Laporan Saya',
-    href: '/laporan-saya',
+    href: '/my-reports',
     icon: FileText,
     authRequired: true,
     showInBottomNav: true,
@@ -94,7 +94,7 @@ export const USER_MENU_ITEMS: UserMenuItem[] = [
 export const ROUTES = {
   home: '/',
   dashboard: '/dashboard',
-  laporanSaya: '/laporan-saya',
+  myReports: '/my-reports',
   lapor: '/lapor',
   signIn: '/api/auth/sign-in',
   signUp: '/api/auth/sign-up',

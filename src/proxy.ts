@@ -12,7 +12,7 @@ import type { NextRequest } from 'next/server';
 import { ACCESS_TOKEN_COOKIE, REDIRECT_PATH_COOKIE } from '@/features/auth/constants';
 
 // Routes that require authentication
-const PROTECTED_ROUTES = ['/dashboard/reports', '/lapor'];
+const PROTECTED_ROUTES = ['/dashboard/reports', '/my-reports', '/lapor'];
 
 // Routes only for unauthenticated users
 const AUTH_ROUTES = ['/sign-in', '/sign-up'];

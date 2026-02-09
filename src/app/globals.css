@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'leaflet/dist/leaflet.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -10,102 +11,104 @@
    Color Philosophy:
    - Gold (#D4A84B): Primary brand color - warmth, trust, value
    - Orange (#E67E22): Accent for warnings, highlights
-   - Light Mode: Cream backgrounds with gold accents
+   - Light Mode: Paper white backgrounds with gold accents
    - Dark Mode: Deep dark (#0D0D0D) - professional, focused
    ============================================ */
 
 /* ============================================
-   LIGHT MODE - Warm cream with gold accents
+   LIGHT MODE - Paper white with gold accents
+   Clean white surfaces, strong borders for contrast
    ============================================ */
 :root {
   /* Base radius */
   --radius: 0.75rem;
 
-  /* Background & Surfaces - Warm cream tones */
-  --background: rgb(252 250 245);
-  --foreground: rgb(38 32 20);
-  --card: rgb(255 253 250);
-  --card-foreground: rgb(38 32 20);
-  --popover: rgb(255 253 250);
-  --popover-foreground: rgb(38 32 20);
+  /* Background & Surfaces
+     Strategy: paper white bg → pure white cards → borders for separation */
+  --background: rgb(247 246 243);
+  --foreground: rgb(28 24 15);
+  --card: rgb(255 255 255);
+  --card-foreground: rgb(28 24 15);
+  --popover: rgb(255 255 255);
+  --popover-foreground: rgb(28 24 15);
 
-  /* Primary - Vibrant Gold */
-  --primary: rgb(212 168 75);
-  --primary-foreground: rgb(38 32 20);
+  /* Primary - Deep Gold for strong contrast on white */
+  --primary: rgb(253 105 18);
+  --primary-foreground: rgb(255 255 255);
 
   /* Secondary - Orange */
-  --secondary: rgb(230 126 34);
+  --secondary: rgb(215 110 22);
   --secondary-foreground: rgb(255 255 255);
 
-  /* Muted - Warm tinted */
-  --muted: rgb(245 240 232);
-  --muted-foreground: rgb(120 110 95);
+  /* Muted - Light neutral gray with warmth */
+  --muted: rgb(240 238 234);
+  --muted-foreground: rgb(100 95 85);
 
-  /* Accent - Light gold for hover states */
-  --accent: rgb(250 245 230);
-  --accent-foreground: rgb(212 168 75);
+  /* Accent - Subtle gold tint for hover states */
+  --accent: rgb(248 244 235);
+  --accent-foreground: rgb(150 118 35);
 
   /* Destructive - Red */
-  --destructive: rgb(231 76 60);
+  --destructive: rgb(210 55 40);
   --destructive-foreground: rgb(255 255 255);
 
   /* Success, Warning, Info */
-  --success: rgb(39 174 96);
+  --success: rgb(30 148 80);
   --success-foreground: rgb(255 255 255);
-  --warning: rgb(243 156 18);
-  --warning-foreground: rgb(38 32 20);
-  --info: rgb(52 152 219);
+  --warning: rgb(220 140 10);
+  --warning-foreground: rgb(28 24 15);
+  --info: rgb(38 130 192);
   --info-foreground: rgb(255 255 255);
 
-  /* Borders & Inputs - Warm tinted */
-  --border: rgb(230 220 200);
-  --input: rgb(230 220 200);
-  --ring: rgb(212 168 75);
+  /* Borders & Inputs - Visible on white */
+  --border: rgb(226 232 240);
+  --input: rgb(226 232 240);
+  --ring: rgb(253 105 18);
 
   /* Charts - Gold/orange palette */
-  --chart-1: rgb(212 168 75); /* Gold */
-  --chart-2: rgb(230 126 34); /* Orange */
-  --chart-3: rgb(52 152 219); /* Blue */
-  --chart-4: rgb(39 174 96); /* Green */
-  --chart-5: rgb(155 89 182); /* Purple */
+  --chart-1: rgb(253 105 18); /* Gold */
+  --chart-2: rgb(215 110 22); /* Orange */
+  --chart-3: rgb(38 130 192); /* Blue */
+  --chart-4: rgb(30 148 80); /* Green */
+  --chart-5: rgb(135 72 160); /* Purple */
 
-  /* Sidebar - Light warm */
-  --sidebar: rgb(250 248 243);
-  --sidebar-foreground: rgb(38 32 20);
-  --sidebar-primary: rgb(212 168 75);
-  --sidebar-primary-foreground: rgb(38 32 20);
-  --sidebar-accent: rgb(245 240 232);
-  --sidebar-accent-foreground: rgb(120 110 95);
-  --sidebar-border: rgb(230 220 200);
-  --sidebar-ring: rgb(212 168 75);
+  /* Sidebar - Slightly tinted for depth */
+  --sidebar: rgb(244 242 238);
+  --sidebar-foreground: rgb(28 24 15);
+  --sidebar-primary: rgb(253 105 18);
+  --sidebar-primary-foreground: rgb(255 255 255);
+  --sidebar-accent: rgb(238 235 230);
+  --sidebar-accent-foreground: rgb(100 95 85);
+  --sidebar-border: rgb(226 232 240);
+  --sidebar-ring: rgb(253 105 18);
 
   /* Status Colors */
-  --status-draft: rgb(149 165 166);
-  --status-pending: rgb(243 156 18);
-  --status-verified: rgb(52 152 219);
-  --status-in-progress: rgb(155 89 182);
-  --status-resolved: rgb(39 174 96);
-  --status-rejected: rgb(231 76 60);
+  --status-draft: rgb(125 140 142);
+  --status-pending: rgb(220 140 10);
+  --status-verified: rgb(38 130 192);
+  --status-in-progress: rgb(135 72 160);
+  --status-resolved: rgb(30 148 80);
+  --status-rejected: rgb(210 55 40);
 
   /* Balung Pisah Custom Colors */
-  --bp-gold: rgb(212 168 75);
-  --bp-gold-light: rgb(229 197 117);
-  --bp-gold-dark: rgb(184 146 63);
-  --bp-orange: rgb(230 126 34);
-  --bp-orange-light: rgb(243 156 18);
-  --bp-orange-dark: rgb(211 84 0);
-  --bp-cream: rgb(245 240 232);
-  --bp-cream-muted: rgb(120 110 95);
+  --bp-gold: rgb(253 105 18);
+  --bp-gold-light: rgb(210 175 90);
+  --bp-gold-dark: rgb(155 120 35);
+  --bp-orange: rgb(215 110 22);
+  --bp-orange-light: rgb(220 140 10);
+  --bp-orange-dark: rgb(185 75 0);
+  --bp-cream: rgb(240 238 234);
+  --bp-cream-muted: rgb(100 95 85);
 
-  /* Shadows */
-  --shadow-2xs: 0 1px 2px 0px rgb(0 0 0 / 0.05);
+  /* Shadows - Slightly stronger for light mode visibility */
+  --shadow-2xs: 0 1px 2px 0px rgb(0 0 0 / 0.06);
   --shadow-xs: 0 1px 3px 0px rgb(0 0 0 / 0.1);
-  --shadow-sm: 0 1px 3px 0px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow: 0 1px 3px 0px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-sm: 0 1px 3px 0px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow: 0 2px 4px 0px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-md: 0 4px 8px -1px rgb(0 0 0 / 0.12), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 10px 18px -3px rgb(0 0 0 / 0.12), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+  --shadow-xl: 0 20px 28px -5px rgb(0 0 0 / 0.12), 0 8px 10px -6px rgb(0 0 0 / 0.08);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.22);
 }
 
 /* ============================================

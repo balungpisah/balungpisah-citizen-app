@@ -169,3 +169,81 @@ export const TAG_COLORS: Record<IReportTagType, string> = {
   urgent: 'bg-warning text-warning-foreground',
   critical: 'bg-destructive text-destructive-foreground',
 };
+
+// ==================== Map & Stats (v2 Dashboard) ====================
+
+export interface IMapMarker {
+  id: string;
+  reference_number: string;
+  title: string;
+  lat: number;
+  lon: number;
+  max_severity: 'critical' | 'high' | 'medium' | 'low';
+  primary_category_name?: string;
+  primary_category_color?: string;
+  tag_type?: string;
+  status: string;
+  created_at: string;
+}
+
+export interface IEnhancedMapData {
+  markers: IMapMarker[];
+  total_count: number;
+}
+
+export interface IComprehensiveStats {
+  total: number;
+  by_severity: {
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+  };
+  by_status: {
+    verified: number;
+    pending: number;
+    rejected: number;
+  };
+  by_tag: {
+    report: number;
+    complaint: number;
+    proposal: number;
+    inquiry: number;
+    appreciation: number;
+  };
+  by_category: Array<{
+    category_id: string;
+    category_name: string;
+    count: number;
+  }>;
+  by_period: Array<{
+    week: string;
+    count: number;
+  }>;
+  by_region: Array<{
+    region_id: string;
+    region_name: string;
+    region_type: string;
+    count: number;
+  }>;
+}
+
+export interface IProvince {
+  id: string;
+  name: string;
+  code: string;
+}
+
+export interface IRegency {
+  id: string;
+  name: string;
+  code: string;
+  province_id: string;
+}
+
+export interface IDashboardRecentPaginatedDto {
+  days: number;
+  pagination: IPaginationMeta;
+  reports: IDashboardReportDto[];
+  total_count: number;
+}
