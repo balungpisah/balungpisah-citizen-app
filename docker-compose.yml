@@ -1,10 +1,7 @@
 services:
   app:
     container_name: ${CONTAINER_NAME:-balungpisah-citizen-app}
-    # image: ${IMAGE_REGISTRY:-ghcr.io/balungpisah/balungpisah-citizen-app}:${IMAGE_TAG:-latest}
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${IMAGE_REGISTRY:-ghcr.io/balungpisah/balungpisah-citizen-app}:${IMAGE_TAG:-latest}
     env_file:
       - .env
     restart: unless-stopped
