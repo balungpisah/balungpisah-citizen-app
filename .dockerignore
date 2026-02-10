@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.husky
+
+# Deployment configs (contains secrets)
+.env.deploy.*
+
+# IDE & OS
+.vscode
+.idea
+.DS_Store
+
+# Docs & misc
+docs
+*.md
+!README.md
