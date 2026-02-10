@@ -2,6 +2,7 @@ node_modules
 .next
 .git
 .husky
+yarn.lock
 
 # Deployment configs (contains secrets)
 .env.deploy.*
