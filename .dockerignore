@@ -2,7 +2,6 @@ node_modules
 .next
 .git
 .husky
-package-lock.json
 yarn.lock
 
 # Deployment configs (contains secrets)
