@@ -5,4 +5,35 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    network_mode: host
+
+    ports:
+      - '127.0.0.1:${PORT:-3000}:${PORT:-3000}'
+
+    environment:
+      - PORT=${PORT:-3000}
+      - HOSTNAME=0.0.0.0
+
+    read_only: true
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    tmpfs:
+      - /tmp:noexec,nosuid,nodev,size=100m
+      - /app/.next/cache:noexec,nosuid,nodev,size=200m
+
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:3000/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));",
+        ]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
