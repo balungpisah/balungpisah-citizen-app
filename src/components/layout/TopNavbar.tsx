@@ -17,6 +17,8 @@ interface TopNavbarProps {
   onSignOut: () => void;
   /** User's display name */
   userName?: string;
+  /** User's email address */
+  userEmail?: string;
   /** User's avatar URL */
   userAvatarUrl?: string;
 }
@@ -31,6 +33,7 @@ export function TopNavbar({
   isLoading = false,
   onSignOut,
   userName,
+  userEmail,
   userAvatarUrl,
 }: TopNavbarProps) {
   const pathname = usePathname();
@@ -94,7 +97,7 @@ export function TopNavbar({
                 </Button>
               )}
               {/* User Menu */}
-              <UserMenu name={userName} avatarUrl={userAvatarUrl} onSignOut={onSignOut} />
+              <UserMenu name={userName} email={userEmail} avatarUrl={userAvatarUrl} onSignOut={onSignOut} />
             </div>
           ) : (
             /* Guest: Show Masuk/Daftar */

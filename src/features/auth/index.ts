@@ -17,9 +17,11 @@ export {
 // Services
 export {
   checkAuthStatus,
+  getUserInfo,
   isAuthenticated,
   refreshAuthStatus,
   clearAuthCache,
+  type UserInfo,
 } from './services/token-service';
 
 // Utils - JWT (works in both client and server)

@@ -20,7 +20,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { ACCESS_TOKEN_COOKIE, REDIRECT_PATH_COOKIE, REFRESH_BUFFER_SECONDS } from '@/features/auth';
-import { getTokenExpiration } from '@/features/auth/utils/jwt';
+import { getTokenExpiration, decodeJwtPayload } from '@/features/auth/utils/jwt';
 import {
   getAccessTokenFromLogto,
   setAccessTokenOnResponse,
@@ -60,13 +60,27 @@ function getRedirectPath(cookieStore: Awaited<ReturnType<typeof cookies>>): stri
 }
 
 /**
- * Build authenticated response with optional redirect path
+ * Build authenticated response with optional redirect path and user info
  */
-function buildAuthenticatedResponse(redirectPath: string | null): NextResponse {
+function buildAuthenticatedResponse(redirectPath: string | null, accessToken?: string): NextResponse {
+  // Extract user info from JWT token
+  let userInfo = null;
+  if (accessToken) {
+    const payload = decodeJwtPayload(accessToken);
+    if (payload) {
+      userInfo = {
+        email: payload.email,
+        name: payload.name,
+        picture: payload.picture,
+      };
+    }
+  }
+
   const response = NextResponse.json(
     {
       authenticated: true,
       redirectPath,
+      user: userInfo,
     },
     {
       status: 200,
@@ -113,7 +127,7 @@ export async function GET() {
 
     // Case 2: Token exists and is valid
     if (!isTokenExpiredOrExpiring(accessToken)) {
-      return buildAuthenticatedResponse(redirectPath);
+      return buildAuthenticatedResponse(redirectPath, accessToken);
     }
 
     // Case 3: Token expired, check if we can refresh
@@ -140,8 +154,8 @@ async function tryRefreshToken(redirectPath: string | null): Promise<NextRespons
       return buildUnauthenticatedResponse();
     }
 
-    // Build response with redirect path
-    const response = buildAuthenticatedResponse(redirectPath);
+    // Build response with redirect path and user info
+    const response = buildAuthenticatedResponse(redirectPath, accessToken);
 
     // Set new access token cookie
     setAccessTokenOnResponse(response, accessToken);
