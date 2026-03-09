@@ -178,7 +178,7 @@ export default function MyReportsPage() {
                             backgroundColor: report.categories[0].color || '#94a3b8',
                           }}
                         />
-                        {report.categories[0].category_name ?? 'Umum'}
+                        {report.categories[0].name}
                       </span>
                     )}
                     {report.location_display_name && (
