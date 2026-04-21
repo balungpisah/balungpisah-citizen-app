@@ -152,7 +152,12 @@ export default function DashboardPage() {
 
   const { data: recentData, isLoading: recentLoading } = useOne<IDashboardRecentPaginatedDto>({
     resource: 'dashboard/recent',
-    filters: { days: '7', page: '1', page_size: '6' },
+    filters: {
+      ...queryParams,
+      days: '7',
+      page: '1',
+      page_size: '6',
+    },
   });
 
   const recentReports = recentData?.reports ?? [];
