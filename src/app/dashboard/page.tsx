@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { useOne, useList } from '@/hooks/api';
+import { formatRelativeTime } from '@/lib/utils/date';
 import type {
   IComprehensiveStats,
   IEnhancedMapData,
@@ -176,20 +177,6 @@ export default function DashboardPage() {
     } else {
       setFilters({ ...filters, [key]: [...currentValues, value] });
     }
-  };
-
-  const formatRelativeTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return 'Baru saja';
-    if (diffMins < 60) return `${diffMins} menit lalu`;
-    if (diffHours < 24) return `${diffHours} jam lalu`;
-    return `${diffDays} hari lalu`;
   };
 
   return (
