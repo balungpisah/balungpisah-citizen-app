@@ -7,6 +7,7 @@
  * This service provides:
  * - Auth check via /api/auth/check endpoint (lightweight, only checks token existence)
  * - Cached auth status to avoid repeated API calls
+ * - User info (email, name, picture) from JWT token
  */
 
 import { AUTH_CACHE_TTL } from '../constants';
@@ -15,11 +16,21 @@ import { AUTH_CACHE_TTL } from '../constants';
 export { ACCESS_TOKEN_COOKIE, REDIRECT_PATH_COOKIE, REFRESH_BUFFER_SECONDS } from '../constants';
 
 // =============================================================================
+// TYPES
+// =============================================================================
+
+export interface UserInfo {
+  email?: string;
+  name?: string;
+  picture?: string;
+}
+
+// =============================================================================
 // STATE
 // =============================================================================
 
-/** Cache for auth status to avoid repeated calls */
-let authStatusCache: { isAuthenticated: boolean; timestamp: number } | null = null;
+/** Cache for auth status and user info to avoid repeated calls */
+let authStatusCache: { isAuthenticated: boolean; timestamp: number; user?: UserInfo } | null = null;
 
 // =============================================================================
 // AUTH STATUS (via server call)
@@ -28,6 +39,7 @@ let authStatusCache: { isAuthenticated: boolean; timestamp: number } | null = nu
 /**
  * Check if user is authenticated by calling /api/auth/check
  * Lightweight endpoint that only checks if access token cookie exists
+ * Also returns user info (email, name, picture) from JWT token
  */
 export async function checkAuthStatus(): Promise<boolean> {
   // Check cache first
@@ -47,12 +59,16 @@ export async function checkAuthStatus(): Promise<boolean> {
       return false;
     }
 
-    // Parse response to check authenticated field
+    // Parse response to check authenticated field and extract user info
     const data = await response.json();
     const isAuthenticated = data.authenticated === true;
 
-    // Update cache
-    authStatusCache = { isAuthenticated, timestamp: now };
+    // Update cache with user info
+    authStatusCache = {
+      isAuthenticated,
+      timestamp: now,
+      user: data.user || undefined,
+    };
 
     return isAuthenticated;
   } catch (error) {
@@ -60,6 +76,21 @@ export async function checkAuthStatus(): Promise<boolean> {
     authStatusCache = { isAuthenticated: false, timestamp: now };
     return false;
   }
+}
+
+/**
+ * Get cached user info (email, name, picture)
+ * Returns null if not authenticated or cache is empty
+ */
+export function getUserInfo(): UserInfo | null {
+  if (!authStatusCache) return null;
+
+  const now = Date.now();
+  if (now - authStatusCache.timestamp > AUTH_CACHE_TTL) {
+    return null;
+  }
+
+  return authStatusCache.user || null;
 }
 
 /**

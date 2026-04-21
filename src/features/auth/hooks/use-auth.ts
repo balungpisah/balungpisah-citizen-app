@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { checkAuthStatus, clearAuthCache } from '../services/token-service';
+import { checkAuthStatus, getUserInfo, clearAuthCache, type UserInfo } from '../services/token-service';
 import { ROUTES } from '@/components/layout/nav-config';
 
 interface UseAuthReturn {
@@ -10,6 +10,8 @@ interface UseAuthReturn {
   isAuthenticated: boolean;
   /** Whether the auth check is still loading */
   isLoading: boolean;
+  /** User info (email, name, picture) from JWT token */
+  user: UserInfo | null;
   /** Sign out the user and redirect to home */
   signOut: () => Promise<void>;
   /** Refresh the auth status */
@@ -26,14 +28,17 @@ export function useAuth(): UseAuthReturn {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<UserInfo | null>(null);
 
   const checkAuth = useCallback(async () => {
     try {
       const authenticated = await checkAuthStatus();
       setIsAuthenticated(authenticated);
+      setUser(getUserInfo());
     } catch (error) {
       console.error('[useAuth] Error checking auth:', error);
       setIsAuthenticated(false);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -46,6 +51,7 @@ export function useAuth(): UseAuthReturn {
   const signOut = useCallback(async () => {
     clearAuthCache();
     setIsAuthenticated(false);
+    setUser(null);
     // Redirect to sign-out endpoint which clears cookies
     router.push(ROUTES.signOut);
   }, [router]);
@@ -59,6 +65,7 @@ export function useAuth(): UseAuthReturn {
   return {
     isAuthenticated,
     isLoading,
+    user,
     signOut,
     refresh,
   };

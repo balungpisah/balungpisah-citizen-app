@@ -38,7 +38,7 @@ export function AppShell({
 }: AppShellProps) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
-  const { isAuthenticated, isLoading, signOut } = useAuth();
+  const { isAuthenticated, isLoading, signOut, user } = useAuth();
 
   // Determine if bottom nav should be hidden
   const shouldHideBottom = hideBottomNav ?? shouldHideBottomNav(pathname);
@@ -54,7 +54,14 @@ export function AppShell({
     <div className={cn('bg-background', fullHeight ? 'flex h-dvh flex-col' : 'min-h-screen')}>
       {/* Header: Either custom or TopNavbar */}
       {customHeader || (
-        <TopNavbar isAuthenticated={isAuthenticated} isLoading={isLoading} onSignOut={signOut} />
+        <TopNavbar
+          isAuthenticated={isAuthenticated}
+          isLoading={isLoading}
+          onSignOut={signOut}
+          userName={user?.name}
+          userEmail={user?.email}
+          userAvatarUrl={user?.picture}
+        />
       )}
 
       {/* Main content */}
