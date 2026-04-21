@@ -49,13 +49,15 @@ export default function MyReportsPage() {
   };
 
   const filters = useMemo(() => {
-    const params: Record<string, string> = {
-      sort_by: sortBy,
-      sort: sortDir,
-    };
+    const params: Record<string, string> = {};
     if (debouncedSearch) params.search = debouncedSearch;
     return params;
-  }, [sortBy, sortDir, debouncedSearch]);
+  }, [debouncedSearch]);
+
+  const sort = useMemo(() => ({
+    field: sortBy,
+    direction: sortDir,
+  }), [sortBy, sortDir]);
 
   const {
     data: reports,
@@ -69,6 +71,7 @@ export default function MyReportsPage() {
     resource: 'reports',
     pageSize: 10,
     filters,
+    sort,
     enabled: isAuthenticated,
   });
 
