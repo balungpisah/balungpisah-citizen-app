@@ -13,8 +13,8 @@ export { STATUS_LABELS, STATUS_COLORS, TAG_LABELS, TAG_COLORS } from '@/features
  */
 export interface IReportCategoryDto {
   category_id: string;
-  category_name?: string | null;
-  category_slug?: string | null;
+  name: string;
+  slug: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   color?: string | null;
 }
